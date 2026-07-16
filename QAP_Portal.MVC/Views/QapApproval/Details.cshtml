@@ -1,0 +1,204 @@
+@model QapGroupDetail
+@{
+    ViewData["Title"] = Model.QapNumber;
+}
+
+<div style="margin-bottom: 20px;">
+    <a asp-action="Index" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">
+        &lt; Back to Approvals
+    </a>
+</div>
+
+<div class="card animate-fade-in" style="border-left: 4px solid var(--primary);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
+                Quality Assurance Plan Approval
+            </div>
+            <h1 class="page-title" style="margin-bottom: 8px;">@Model.QapNumber</h1>
+            <span class="pill pill-@Model.Status.ToString().ToLower()">@Model.Status</span>
+        </div>
+        
+        <div style="display: flex; gap: 8px;">
+            @if (Model.Status == QapStatus.Submitted)
+            {
+                <form asp-action="Approve" asp-route-id="@Model.GroupId" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--success); border-color: var(--success);">
+                        ✓ Approve QAP
+                    </button>
+                </form>
+                <button type="button" class="btn btn-danger" id="rejectBtn">✕ Reject</button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card animate-fade-in" style="animation-delay: 0.1s;">
+    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); border-bottom: 1.5px solid var(--border); padding-bottom: 8px;">
+        Purchase Order Information
+    </h3>
+    <div class="detail-grid">
+        <div><div class="label">PO Number</div><div class="value" style="color: var(--primary);">@Model.PoNumber</div></div>
+        <div><div class="label">PO Date</div><div class="value">@(Model.PoDate?.ToString("yyyy-MM-dd") ?? "-")</div></div>
+        <div><div class="label">Vendor Code</div><div class="value">@(Model.VendorCode ?? "-")</div></div>
+        <div><div class="label">PO Description</div><div class="value">@(Model.PoDescription ?? "-")</div></div>
+    </div>
+</div>
+
+<div class="card animate-fade-in" style="animation-delay: 0.15s;">
+    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); border-bottom: 1.5px solid var(--border); padding-bottom: 8px;">
+        Line Items in this QAP (@Model.LineItems.Count)
+    </h3>
+    <table class="line-items-table">
+        <thead>
+            <tr>
+                <th style="width: 80px;">Line #</th>
+                <th style="width: 80px;">Item #</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var li in Model.LineItems)
+            {
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-main);">@li.Line</td>
+                    <td style="font-weight: 700; color: var(--text-muted);">@li.ItemNo</td>
+                    <td>@(li.Description ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="card animate-fade-in" style="animation-delay: 0.2s;">
+    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); border-bottom: 1.5px solid var(--border); padding-bottom: 8px;">
+        Associated Documents
+    </h3>
+    
+    <div style="margin-bottom: 20px;">
+        <div class="label" style="margin-bottom: 8px;">PO Level Documents</div>
+        <div class="doc-grid">
+            @if (Model.HasTechSpec)
+            {
+                <a class="doc-card" asp-controller="Qap" asp-action="DownloadTechSpec" asp-route-po="@Model.PoNumber">
+                    <div class="doc-card-icon">📄</div>
+                    <div class="doc-card-info">
+                        <div class="doc-card-title">Technical Specification</div>
+                        <div class="doc-card-subtitle">PO level document</div>
+                    </div>
+                </a>
+            }
+            @if (Model.HasPoCopy)
+            {
+                <a class="doc-card" asp-controller="Qap" asp-action="DownloadPoCopy" asp-route-po="@Model.PoNumber">
+                    <div class="doc-card-icon">📄</div>
+                    <div class="doc-card-info">
+                        <div class="doc-card-title">Purchase Order Copy</div>
+                        <div class="doc-card-subtitle">PO level document</div>
+                    </div>
+                </a>
+            }
+            @if (!Model.HasTechSpec && !Model.HasPoCopy)
+            {
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
+                    No PO level documents uploaded
+                </div>
+            }
+        </div>
+    </div>
+
+    <div>
+        <div class="label" style="margin-bottom: 8px;">Group/Item Documents</div>
+        <div class="doc-grid">
+            @if (Model.HasQapDocument)
+            {
+                <a class="doc-card" asp-controller="Qap" asp-action="DownloadQapDocument" asp-route-id="@Model.GroupId">
+                    <div class="doc-card-icon" style="background-color: var(--secondary-light); color: var(--secondary);">📁</div>
+                    <div class="doc-card-info">
+                        <div class="doc-card-title">QAP Document</div>
+                        <div class="doc-card-subtitle">Group sheet upload</div>
+                    </div>
+                </a>
+            }
+            @if (Model.HasDrawing)
+            {
+                <a class="doc-card" asp-controller="Qap" asp-action="DownloadDrawing" asp-route-id="@Model.GroupId">
+                    <div class="doc-card-icon" style="background-color: var(--secondary-light); color: var(--secondary);">📐</div>
+                    <div class="doc-card-info">
+                        <div class="doc-card-title">Drawing</div>
+                        <div class="doc-card-subtitle">Technical blueprint</div>
+                    </div>
+                </a>
+            }
+            @if (!Model.HasQapDocument && !Model.HasDrawing)
+            {
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
+                    No group documents uploaded
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card animate-fade-in" style="animation-delay: 0.25s;">
+    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); border-bottom: 1.5px solid var(--border); padding-bottom: 8px;">
+        Action &amp; Decision Logs
+    </h3>
+    
+    <div class="timeline">
+        @foreach (var log in Model.ActionLogs)
+        {
+            <div class="timeline-item @(log.Stage == "I" ? "initiator" : "")">
+                <div class="timeline-badge">@(log.Stage == "I" ? "I" : "R")</div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <span class="timeline-user">
+                            @log.ActionBy 
+                            <span class="timeline-stage" style="@(log.Stage == "I" ? "background-color: var(--secondary-light); color: var(--secondary);" : "background-color: var(--primary-light); color: var(--primary);")">
+                                @(log.Stage == "I" ? "Initiator" : "Reviewer")
+                            </span>
+                        </span>
+                        <span class="timeline-date">@(log.ActionOn?.ToString("M/d/yyyy, h:mm tt") ?? "-")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(log.Remarks))
+                    {
+                        <div class="timeline-remarks">@log.Remarks</div>
+                    }
+                    else
+                    {
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">No remarks provided.</div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Reject modal - remarks mandatory (API rejects the request otherwise) -->
+<div class="modal-backdrop" id="rejectModal">
+    <div class="modal">
+        <h3 style="margin-bottom: 14px;">Reject QAP — @Model.QapNumber</h3>
+        <form asp-action="Reject" method="post">
+            <input type="hidden" name="GroupId" value="@Model.GroupId" />
+            <input type="hidden" name="QapNumber" value="@Model.QapNumber" />
+            <div class="form-group">
+                <label class="form-label">Remarks / Reason *</label>
+                <textarea name="Remarks" required placeholder="Describe the reason for rejection..." class="form-control" style="min-height: 120px;"></textarea>
+            </div>
+            <div class="btn-row" style="margin-top: 20px;">
+                <button type="button" class="btn btn-secondary" id="cancelRejectBtn">Cancel</button>
+                <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const rejectBtn = document.getElementById('rejectBtn');
+    const rejectModal = document.getElementById('rejectModal');
+    if (rejectBtn) rejectBtn.addEventListener('click', () => rejectModal.classList.add('visible'));
+    const cancelRejectBtn = document.getElementById('cancelRejectBtn');
+    if (cancelRejectBtn) cancelRejectBtn.addEventListener('click', () => rejectModal.classList.remove('visible'));
+</script>
+}

@@ -1,0 +1,58 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    bool isAdmin = Model.Role == nameof(UserRole.Admin);
+}
+
+<h1 class="page-title">Dashboard</h1>
+<p class="page-subtitle">
+    @(isAdmin ? "Overview of all QAPs awaiting review, approved and rejected." : "Overview of the QAPs you've created.")
+</p>
+
+<div class="stat-grid">
+    <div class="stat-card"><div class="stat-value">@Model.Total</div><div class="stat-label">Total QAPs</div></div>
+    <div class="stat-card"><div class="stat-value">@Model.DraftCount</div><div class="stat-label">Draft</div></div>
+    <div class="stat-card"><div class="stat-value">@Model.SubmittedCount</div><div class="stat-label">Submitted</div></div>
+    <div class="stat-card"><div class="stat-value">@Model.ApprovedCount</div><div class="stat-label">Approved</div></div>
+    <div class="stat-card"><div class="stat-value">@Model.RejectedCount</div><div class="stat-label">Rejected</div></div>
+</div>
+
+<div class="dash-actions">
+    @if (isAdmin)
+    {
+        <a class="btn btn-primary" asp-controller="QapApproval" asp-action="Index" asp-route-status="Submitted">Review Pending QAPs</a>
+        <a class="btn btn-secondary" asp-controller="QapApproval" asp-action="Index">View All QAPs</a>
+    }
+    else
+    {
+        <a class="btn btn-primary" asp-controller="Qap" asp-action="Create">+ New QAP</a>
+        <a class="btn btn-secondary" asp-controller="Qap" asp-action="MyQaps">View My QAPs</a>
+    }
+</div>
+
+<div class="card" style="margin-top:24px;">
+    <div class="label" style="margin-bottom:10px;">Recent QAPs</div>
+    <table class="qap-table">
+        <thead>
+            <tr><th>QAP Number</th><th>PO Number</th><th>Date</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+        @if (!Model.RecentQaps.Any())
+        {
+            <tr><td colspan="5" style="text-align:center;color:#8a8a8e;">No QAPs yet.</td></tr>
+        }
+        @foreach (var qap in Model.RecentQaps)
+        {
+            <tr>
+                <td>@qap.QapNumber</td>
+                <td>@qap.PoNumber</td>
+                <td>@(qap.InitiatedOn?.ToString("M/d/yyyy") ?? "-")</td>
+                <td><span class="pill pill-@qap.Status.ToString().ToLower()">@qap.Status</span></td>
+                <td>
+                    <a asp-controller="@(isAdmin ? "QapApproval" : "Qap")" asp-action="Details" asp-route-id="@qap.GroupId">View &gt;</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

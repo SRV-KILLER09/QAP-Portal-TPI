@@ -1,0 +1,551 @@
+[
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.GroupActionLogController",
+    "Method": "GetAll",
+    "RelativePath": "api/GroupActionLog",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.GroupActionLogController",
+    "Method": "Create",
+    "RelativePath": "api/GroupActionLog",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "log",
+        "Type": "QAP.Portal.API.Models.GroupActionLog",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.GroupActionLogController",
+    "Method": "GetById",
+    "RelativePath": "api/GroupActionLog/{seqNo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "seqNo",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.GroupActionLogController",
+    "Method": "Update",
+    "RelativePath": "api/GroupActionLog/{seqNo}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "seqNo",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "QAP.Portal.API.Models.GroupActionLog",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.GroupActionLogController",
+    "Method": "Delete",
+    "RelativePath": "api/GroupActionLog/{seqNo}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "seqNo",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "GetAll",
+    "RelativePath": "api/PoDocuments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "Create",
+    "RelativePath": "api/PoDocuments",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doc",
+        "Type": "QAP.Portal.API.Models.PoDocument",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "GetById",
+    "RelativePath": "api/PoDocuments/{po}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "Update",
+    "RelativePath": "api/PoDocuments/{po}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "QAP.Portal.API.Models.PoDocument",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "Delete",
+    "RelativePath": "api/PoDocuments/{po}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "UploadPoCopy",
+    "RelativePath": "api/PoDocuments/{po}/upload-po-copy",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.PoDocumentsController",
+    "Method": "UploadTechSpec",
+    "RelativePath": "api/PoDocuments/{po}/upload-tech-spec",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapCreationController",
+    "Method": "CreateFullQap",
+    "RelativePath": "api/QapCreation",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QAP.Portal.API.Models.Dtos.CreateQapRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapGroupItemsController",
+    "Method": "GetAll",
+    "RelativePath": "api/QapGroupItems",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapGroupItemsController",
+    "Method": "Create",
+    "RelativePath": "api/QapGroupItems",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "item",
+        "Type": "QAP.Portal.API.Models.QapGroupItem",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapGroupItemsController",
+    "Method": "GetById",
+    "RelativePath": "api/QapGroupItems/{po}/{line}/{itemNo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "line",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemNo",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapGroupItemsController",
+    "Method": "Update",
+    "RelativePath": "api/QapGroupItems/{po}/{line}/{itemNo}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "line",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemNo",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "QAP.Portal.API.Models.QapGroupItem",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapGroupItemsController",
+    "Method": "Delete",
+    "RelativePath": "api/QapGroupItems/{po}/{line}/{itemNo}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "po",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "line",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemNo",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "GetAll",
+    "RelativePath": "api/QapLineGroups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Create",
+    "RelativePath": "api/QapLineGroups",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "group",
+        "Type": "QAP.Portal.API.Models.QapLineGroup",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "GetById",
+    "RelativePath": "api/QapLineGroups/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Update",
+    "RelativePath": "api/QapLineGroups/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "QAP.Portal.API.Models.QapLineGroup",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Delete",
+    "RelativePath": "api/QapLineGroups/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Approve",
+    "RelativePath": "api/QapLineGroups/{id}/approve",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "req",
+        "Type": "QAP.Portal.API.Controllers.ActionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Reject",
+    "RelativePath": "api/QapLineGroups/{id}/reject",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "req",
+        "Type": "QAP.Portal.API.Controllers.RejectRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Reopen",
+    "RelativePath": "api/QapLineGroups/{id}/reopen",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "req",
+        "Type": "QAP.Portal.API.Controllers.ActionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "Submit",
+    "RelativePath": "api/QapLineGroups/{id}/submit",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "req",
+        "Type": "QAP.Portal.API.Controllers.ActionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "UploadDrawing",
+    "RelativePath": "api/QapLineGroups/{id}/upload-drawing",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QAP.Portal.API.Controllers.QapLineGroupsController",
+    "Method": "UploadQapDocument",
+    "RelativePath": "api/QapLineGroups/{id}/upload-qap-document",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__2",
+    "RelativePath": "weatherforecast",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "WeatherForecast[]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetWeatherForecast"
+  }
+]

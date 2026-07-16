@@ -1,0 +1,293 @@
+@model QAP_Portal.MVC.Models.CreateQapViewModel
+@{
+    ViewData["Title"] = "New Quality Assurance Plan";
+}
+
+<div style="font-size:12px;color:#8a8a8e;margin-bottom:4px;">QAP CREATION</div>
+<h1 class="page-title">New Quality Assurance Plan</h1>
+
+<div class="stepper" id="stepper">
+    <div class="step active" data-step="1"><span class="step-num">1</span> Select PO</div>
+    <div class="step" data-step="2"><span class="step-num">2</span> Line Items Under QAP</div>
+    <div class="step" data-step="3"><span class="step-num">3</span> Documents</div>
+    <div class="step" data-step="4"><span class="step-num">4</span> Review &amp; Submit</div>
+</div>
+
+<form id="qapForm" asp-controller="Qap" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="field-error"></div>
+
+    <!-- STEP 1: SELECT PO -->
+    <div class="wizard-panel visible" data-panel="1">
+        <h3>Step 1 &middot; Select Purchase Order</h3>
+        <p style="font-size:13px;color:#6b6b6f;">Choose the PO against which you want to create a QAP.</p>
+        <label class="form-label">PO Number</label>
+        <div style="display:flex;gap:10px;max-width:400px;">
+            <input type="text" id="poNumberSearch" placeholder="e.g. 4500001234" value="@Model.PoNumber" />
+            <button type="button" id="searchPoBtn" class="btn btn-secondary">Search</button>
+        </div>
+        <div id="poSearchMessage" class="field-error"></div>
+
+        <div id="poResult" style="display:none;margin-top:20px;">
+            <div class="detail-grid">
+                <div><div class="label">PO Number</div><div class="value" id="poResultNumber"></div></div>
+                <div><div class="label">PO Date</div><div class="value" id="poResultDate"></div></div>
+                <div><div class="label">Description</div><div class="value" id="poResultDesc"></div></div>
+                <div><div class="label">Vendor Code</div><div class="value" id="poResultVendor"></div></div>
+            </div>
+        </div>
+
+        <input type="hidden" asp-for="PoNumber" id="poNumberHidden" />
+
+        <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="toStep2Btn" disabled>Create QAP</button>
+        </div>
+    </div>
+
+    <!-- STEP 2: LINE ITEMS UNDER QAP -->
+    <div class="wizard-panel" data-panel="2">
+        <h3>Step 2 &middot; Line Items Under QAP</h3>
+        <p style="font-size:13px;color:#6b6b6f;">Select line items as a group for which the QAP Document &amp; Drawing are to be uploaded. Each group becomes its own QAP.</p>
+
+        <table class="line-items-table" id="lineItemsTable">
+            <thead>
+                <tr><th></th><th>Line #</th><th>Item #</th><th>Description</th><th>Qty Ordered</th><th>UOM</th></tr>
+            </thead>
+            <tbody id="lineItemsBody"></tbody>
+        </table>
+
+        <button type="button" id="addDocumentsBtn" class="btn btn-secondary" disabled>Add Documents</button>
+
+        <div id="groupsContainer" style="margin-top:16px;"></div>
+
+        <div class="btn-row split">
+            <button type="button" class="btn btn-secondary" data-back="1">&lt; Back</button>
+            <button type="button" class="btn btn-primary" data-next="3" id="toStep3Btn" disabled>Next &gt;</button>
+        </div>
+    </div>
+
+    <!-- STEP 3: DOCUMENTS (PO level) -->
+    <div class="wizard-panel" data-panel="3">
+        <h3>Step 3 &middot; Documents</h3>
+        <p style="font-size:13px;color:#6b6b6f;">Upload PO level documents applicable to the complete PO.</p>
+
+        <div class="detail-grid">
+            <div>
+                <label class="form-label">Technical Specification *</label>
+                <input type="file" asp-for="TechnicalSpecificationFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+                <div style="font-size:11px;color:#8a8a8e;">PDF, DOCX, JPG up to 25MB</div>
+            </div>
+            <div>
+                <label class="form-label">Purchase Order Copy *</label>
+                <input type="file" asp-for="PurchaseOrderCopyFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+                <div style="font-size:11px;color:#8a8a8e;">PDF, DOCX, JPG up to 25MB</div>
+            </div>
+        </div>
+
+        <label class="form-label">Remarks (optional)</label>
+        <textarea asp-for="Remarks" placeholder="Any notes or context for the inspection department..."></textarea>
+        <div style="font-size:11px;color:#8a8a8e;margin-top:4px;">Note: remarks are not stored by the API today - shown here for context only.</div>
+
+        <div class="btn-row split">
+            <button type="button" class="btn btn-secondary" data-back="2">&lt; Back</button>
+            <button type="button" class="btn btn-primary" data-next="4">Next &gt;</button>
+        </div>
+    </div>
+
+    <!-- STEP 4: REVIEW & SUBMIT -->
+    <div class="wizard-panel" data-panel="4">
+        <h3>Step 4 &middot; Review &amp; Submit</h3>
+        <p style="font-size:13px;color:#6b6b6f;">Review the complete QAP before submission. Submitting creates one QAP per group below and immediately sets it to Submitted.</p>
+
+        <div class="card">
+            <div class="detail-grid">
+                <div><div class="label">PO Number</div><div class="value" id="reviewPoNumber"></div></div>
+                <div><div class="label">PO Date</div><div class="value" id="reviewPoDate"></div></div>
+            </div>
+            <div class="label" style="margin-bottom:6px;">Groups (one QAP each)</div>
+            <ul id="reviewLineItems" style="font-size:13px;"></ul>
+            <div class="label" style="margin-bottom:6px;">Uploaded Files</div>
+            <ul id="reviewFiles" style="font-size:13px;"></ul>
+            <div class="label" style="margin-bottom:6px;">Remarks</div>
+            <div id="reviewRemarks" style="font-size:13px;color:#6b6b6f;">&mdash;</div>
+        </div>
+
+        <div class="btn-row split">
+            <button type="button" class="btn btn-secondary" data-back="3">&lt; Back</button>
+            <button type="submit" class="btn btn-primary">Submit QAP</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    let currentPo = null;
+    let groups = []; // { lineItems: [{line, itemNo}] }
+
+    // Intercept form submission to prevent premature wizard POSTs
+    document.getElementById('qapForm').addEventListener('submit', function(e) {
+        const activePanel = document.querySelector('.wizard-panel.visible');
+        if (activePanel && activePanel.dataset.panel !== '4') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Handle Enter key inside PO search to search instead of submitting the form
+    document.getElementById('poNumberSearch').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('searchPoBtn').click();
+        }
+    });
+
+    function goToStep(step) {
+        document.querySelectorAll('.wizard-panel').forEach(p => p.classList.toggle('visible', p.dataset.panel === String(step)));
+        document.querySelectorAll('.step').forEach(s => {
+            const n = Number(s.dataset.step);
+            s.classList.toggle('active', n === step);
+            s.classList.toggle('done', n < step);
+        });
+        if (step === 4) buildReview();
+    }
+
+    document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => goToStep(Number(b.dataset.back))));
+    document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => goToStep(Number(b.dataset.next))));
+
+    document.getElementById('searchPoBtn').addEventListener('click', async () => {
+        const poNumber = document.getElementById('poNumberSearch').value.trim();
+        const msg = document.getElementById('poSearchMessage');
+        msg.textContent = '';
+        if (!poNumber) { msg.textContent = 'Enter a PO number.'; return; }
+
+        const res = await fetch(`/Qap/SearchPo?poNumber=${encodeURIComponent(poNumber)}`);
+        const data = await res.json();
+        if (!data.success) {
+            msg.textContent = data.message;
+            document.getElementById('poResult').style.display = 'none';
+            document.getElementById('toStep2Btn').disabled = true;
+            return;
+        }
+
+        currentPo = data.po;
+        document.getElementById('poNumberHidden').value = currentPo.poNumber;
+        document.getElementById('poResultNumber').textContent = currentPo.poNumber;
+        document.getElementById('poResultDate').textContent = currentPo.poDate ? new Date(currentPo.poDate).toLocaleDateString() : '-';
+        document.getElementById('poResultDesc').textContent = currentPo.poDescription || '-';
+        document.getElementById('poResultVendor').textContent = currentPo.vendorCode || '-';
+        document.getElementById('poResult').style.display = 'block';
+        document.getElementById('toStep2Btn').disabled = false;
+
+        renderLineItems(currentPo.fullLineItems || []);
+    });
+
+    document.getElementById('toStep2Btn').addEventListener('click', () => goToStep(2));
+
+    function renderLineItems(items) {
+        const body = document.getElementById('lineItemsBody');
+        body.innerHTML = '';
+        items.forEach(li => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="line-item-cb" data-line="${li.line}" data-item="${li.itemNo}"></td>
+                <td>${li.line}</td>
+                <td>${li.itemNo}</td>
+                <td>${li.description ?? ''}</td>
+                <td>${li.qtyOrdered ?? ''}</td>
+                <td>${li.uom ?? ''}</td>`;
+            body.appendChild(tr);
+        });
+        body.querySelectorAll('.line-item-cb').forEach(cb => cb.addEventListener('change', updateAddDocumentsState));
+    }
+
+    function updateAddDocumentsState() {
+        const anyChecked = document.querySelectorAll('.line-item-cb:checked').length > 0;
+        document.getElementById('addDocumentsBtn').disabled = !anyChecked;
+    }
+
+    document.getElementById('addDocumentsBtn').addEventListener('click', () => {
+        const checked = Array.from(document.querySelectorAll('.line-item-cb:checked'));
+        if (checked.length === 0) return;
+
+        const lineItems = checked.map(cb => ({ line: Number(cb.dataset.line), itemNo: Number(cb.dataset.item) }));
+        groups.push({ lineItems });
+
+        checked.forEach(cb => { cb.checked = false; cb.disabled = true; cb.closest('tr').style.opacity = 0.5; });
+        updateAddDocumentsState();
+        renderGroups();
+    });
+
+    function renderGroups() {
+        const container = document.getElementById('groupsContainer');
+        container.innerHTML = '';
+        groups.forEach((g, idx) => {
+            const div = document.createElement('div');
+            div.className = 'group-block';
+            const summary = g.lineItems.map(li => `L${li.line}/I${li.itemNo}`).join(', ');
+            div.innerHTML = `
+                <div class="group-header">
+                    <strong>Group ${idx + 1}</strong> — ${summary}
+                    <button type="button" class="btn btn-danger" data-remove-group="${idx}">Delete</button>
+                </div>
+                <div class="detail-grid">
+                    <div>
+                        <label class="form-label">QAP Document</label>
+                        <input type="file" name="Groups[${idx}].QapDocumentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg" />
+                    </div>
+                    <div>
+                        <label class="form-label">Drawing</label>
+                        <input type="file" name="Groups[${idx}].DrawingFile" accept=".pdf,.doc,.docx,.jpg,.jpeg" />
+                    </div>
+                </div>
+                ${g.lineItems.map((li, liIdx) => `
+                    <input type="hidden" name="Groups[${idx}].LineItems[${liIdx}].Line" value="${li.line}" />
+                    <input type="hidden" name="Groups[${idx}].LineItems[${liIdx}].ItemNo" value="${li.itemNo}" />
+                `).join('')}
+            `;
+            container.appendChild(div);
+        });
+
+        container.querySelectorAll('[data-remove-group]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = Number(btn.dataset.removeGroup);
+                groups.splice(idx, 1);
+                document.querySelectorAll('.line-item-cb').forEach(cb => { cb.disabled = false; cb.closest('tr').style.opacity = 1; });
+                renderGroups();
+            });
+        });
+
+        document.getElementById('toStep3Btn').disabled = groups.length === 0;
+    }
+
+    function buildReview() {
+        document.getElementById('reviewPoNumber').textContent = currentPo ? currentPo.poNumber : '';
+        document.getElementById('reviewPoDate').textContent = currentPo && currentPo.poDate ? new Date(currentPo.poDate).toLocaleDateString() : '';
+
+        const liList = document.getElementById('reviewLineItems');
+        liList.innerHTML = '';
+        groups.forEach((g, idx) => {
+            const li = document.createElement('li');
+            li.textContent = `Group ${idx + 1}: ${g.lineItems.map(x => `Line ${x.line} / Item ${x.itemNo}`).join(', ')}`;
+            liList.appendChild(li);
+        });
+
+        const filesList = document.getElementById('reviewFiles');
+        filesList.innerHTML = '';
+        const techFile = document.querySelector('input[name="TechnicalSpecificationFile"]').files[0];
+        const poFile = document.querySelector('input[name="PurchaseOrderCopyFile"]').files[0];
+        if (techFile) addFileLi(filesList, `Technical Specification: ${techFile.name}`);
+        if (poFile) addFileLi(filesList, `Purchase Order Copy: ${poFile.name}`);
+        document.querySelectorAll('#groupsContainer input[type=file]').forEach(inp => {
+            if (inp.files[0]) addFileLi(filesList, `${inp.name}: ${inp.files[0].name}`);
+        });
+
+        const remarks = document.querySelector('textarea[name="Remarks"]').value;
+        document.getElementById('reviewRemarks').textContent = remarks && remarks.trim() ? remarks : '—';
+    }
+
+    function addFileLi(list, text) {
+        const li = document.createElement('li');
+        li.textContent = text;
+        list.appendChild(li);
+    }
+</script>
+}

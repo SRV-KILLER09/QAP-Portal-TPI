@@ -1,0 +1,181 @@
+@using QAP_Portal.MVC.Models
+
+@{
+    ViewData["Title"] = "Sign In";
+}
+
+
+    <div class="login-bg-decor" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1;">
+        <div class="login-decor-blob-1"></div>
+        <div class="login-decor-blob-2"></div>
+        <div class="login-grid-3d"></div>
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+    </div>
+    
+    <div class="login-container">
+        <!-- Logo & Branding -->
+        <div class="login-brand-header">
+            <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 150px; height: auto; margin-bottom: 16px; border-radius: var(--radius-md); filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));" />
+            <h1 class="brand-title">QAP &amp; TPI Portal</h1>
+            <p class="brand-subtitle">GAIL (India) Limited - Inspection Management System</p>
+        </div>
+
+        @if (TempData["Error"] is string errorMsg)
+        {
+            <div class="alert alert-error animate-fade-in">
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>@errorMsg</span>
+            </div>
+        }
+
+        <!-- Unified Login Card -->
+        <div class="login-card">
+            <!-- Tabs -->
+            <div class="login-tabs">
+                <button type="button" class="login-tab active" id="tab-initiator" onclick="switchTab('initiator')">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                    </svg>
+                    <span>Mechanical Initiator</span>
+                </button>
+                <button type="button" class="login-tab" id="tab-admin" onclick="switchTab('admin')">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Inspection Admin</span>
+                </button>
+            </div>
+
+            <!-- Initiator Login Form -->
+            <form id="form-initiator" asp-controller="Home" asp-action="SetRole" method="post" class="login-form active">
+                <input type="hidden" name="role" value="@nameof(UserRole.Initiator)" />
+                
+                <div class="form-group">
+                    <label class="form-label-fancy" for="initiator-email">Initiator Email Address</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <input type="text"
+                               id="initiator-email"
+                               name="email"
+                               placeholder="initiator@gail.in"
+                               required />
+                    </div>
+                    <span class="input-help">Enter your corporate email address to access QAP requests.</span>
+                </div>
+
+                <button type="submit" class="btn-login btn-login-initiator">
+                    <span>Access Initiator Portal</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Admin Login Form -->
+            <form id="form-admin" asp-controller="Home" asp-action="SetRole" method="post" class="login-form">
+                <input type="hidden" name="role" value="@nameof(UserRole.Admin)" />
+                
+                <div class="form-group">
+                    <label class="form-label-fancy" for="admin-email">Admin Email Address</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <input type="text"
+                               id="admin-email"
+                               name="email"
+                               placeholder="e.g. admin@gail.in"
+                               required />
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label class="form-label-fancy" for="admin-password" style="margin-bottom: 0;">Password</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <input type="password"
+                               id="admin-password"
+                               name="password"
+                               placeholder="••••••••"
+                               required />
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
+                            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="input-help">Secure credential verification required. Only registered admins can access.</span>
+                </div>
+
+                <button type="submit" class="btn-login btn-login-admin">
+                    <span>Access Admin Portal</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <p>&copy; @DateTime.Now.Year GAIL (India) Limited. All Rights Reserved.</p>
+            <p class="footer-help">Need help? Contact system administrator at <a href="mailto:support@gail.in">support@gail.in</a></p>
+        </div>
+    </div>
+
+
+@section Scripts {
+<script>
+    function switchTab(role) {
+        // Toggle Active Tab class
+        document.getElementById('tab-initiator').classList.toggle('active', role === 'initiator');
+        document.getElementById('tab-admin').classList.toggle('active', role === 'admin');
+        
+        // Toggle Active Form class
+        document.getElementById('form-initiator').classList.toggle('active', role === 'initiator');
+        document.getElementById('form-admin').classList.toggle('active', role === 'admin');
+        
+        // Clear errors on tab switch
+        const errorAlert = document.querySelector('.alert-error');
+        if (errorAlert) {
+            errorAlert.style.display = 'none';
+        }
+    }
+
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('admin-password');
+        const eyeIcon = document.getElementById('eye-icon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.innerHTML = `
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+            `;
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.innerHTML = `
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            `;
+        }
+    }
+</script>
+}

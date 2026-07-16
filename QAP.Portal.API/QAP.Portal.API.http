@@ -1,0 +1,6 @@
+@QAP.Portal.API_HostAddress = http://localhost:5173
+
+GET {{QAP.Portal.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
