@@ -276,6 +276,10 @@ Every transition writes a row to `GROUP_ACTION_LOG` with the acting user, timest
 
 ---
 
+<img width="949" height="476" alt="image" src="https://github.com/user-attachments/assets/e2bacb5d-19e3-4e5b-ae7e-872304ee4319" />
+
+---
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for details.
