@@ -20,8 +20,8 @@
     <meta property="og:url" content="https://localhost:7280" />
     <meta property="og:site_name" content="GAIL (India) Limited" />
 
-    <!-- Dynamic SVG Favicon (Official Orange Flame Logo) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 20C50 20 62 35 62 48C62 60 54 70 42 70C30 70 22 60 22 48C22 35 34 20 34 20C34 20 38 36 46 38C54 40 50 20 50 20Z%22 fill=%22%23ff7f27%22/></svg>">
+    <!-- GAIL Official Favicon -->
+    <link rel="icon" type="image/png" href="/images/gail_logo.png">
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script>
@@ -60,8 +60,8 @@ else
                     <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 38px; height: auto;" />
                 </div>
                 <div class="brand-info" style="display: flex; flex-direction: column; gap: 3px;">
-                    <span class="brand-company" style="font-size: 11.5px; font-weight: 800; color: var(--text-white); letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.2;">GAIL (India) Ltd.</span>
-                    <span class="brand-system" style="font-size: 9.5px; font-weight: 700; color: #3b82f6; letter-spacing: 1px; text-transform: uppercase; line-height: 1.1;">QAP &amp; TPI Portal</span>
+                    <span class="brand-company" style="font-size: 12.5px; font-weight: 800; color: var(--text-white); letter-spacing: 0.5px; line-height: 1.2; font-family: 'Outfit', sans-serif;">GAIL (India) Ltd.</span>
+                    <span class="brand-system" style="font-size: 9.5px; font-weight: 700; color: #3b82f6; letter-spacing: 1px; text-transform: uppercase; line-height: 1.1; font-family: 'Inter', sans-serif;">QAP &amp; TPI Portal</span>
                 </div>
             </div>
 
@@ -169,6 +169,16 @@ else
                 <button id="mobileMenuToggle" class="mobile-menu-toggle-btn" onclick="toggleMobileSidebar()" aria-label="Toggle Menu">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
+                
+                <div class="topbar-brand" style="display: flex; align-items: center; gap: 12px; margin-left: 8px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);">
+                        <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 28px; height: auto;" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-size: 13.5px; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px; text-transform: uppercase; font-family: 'Outfit', sans-serif; line-height: 1.2;">GAIL (India) Limited</span>
+                        <span style="font-size: 9.5px; font-weight: 700; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; font-family: 'Inter', sans-serif; line-height: 1;">QAP &amp; TPI Portal</span>
+                    </div>
+                </div>
                 
                 <div class="user-profile-container" style="position: relative; margin-left: auto; display: flex; align-items: center; gap: 12px; z-index: 100001;">
                     <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
@@ -310,29 +320,32 @@ else
             <!-- Header -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(24, 90, 219, 0.1) 0%, rgba(255, 127, 39, 0.05) 100%);">
                 <div>
-                    <span style="font-size: 10px; font-weight: 800; color: var(--secondary); letter-spacing: 1px; text-transform: uppercase;">GAIL IT Core Support</span>
-                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin: 4px 0 0 0;">System Diagnostics &amp; Helpdesk</h3>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--secondary); letter-spacing: 1px; text-transform: uppercase; font-family: 'Outfit', sans-serif;">GAIL IT Core Support</span>
+                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin: 4px 0 0 0; font-family: 'Outfit', sans-serif;">System Diagnostics &amp; Helpdesk</h3>
                 </div>
-                <button type="button" onclick="closeHelpdeskModal()" style="background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; line-height: 1;">&times;</button>
+                <button type="button" class="modal-close-btn" onclick="closeHelpdeskModal()">&times;</button>
             </div>
             
             <!-- Content -->
             <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
                 <!-- Real-time Diagnostics -->
                 <div>
-                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Live Services Health</div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-family: 'Inter', sans-serif;">Live Services Health</div>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                        <div style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;">
+                        <div class="health-card">
+                            <span class="health-pulse-dot"></span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: #10b981; margin: 0 auto 6px auto; display: block;"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>
-                            <div style="font-size: 10px; font-weight: 700; color: #10b981;">Oracle DB</div>
+                            <div style="font-size: 10px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Oracle DB</div>
                         </div>
-                        <div style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;">
+                        <div class="health-card">
+                            <span class="health-pulse-dot"></span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: #10b981; margin: 0 auto 6px auto; display: block;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                            <div style="font-size: 10px; font-weight: 700; color: #10b981;">Portal API</div>
+                            <div style="font-size: 10px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Portal API</div>
                         </div>
-                        <div style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;">
+                        <div class="health-card">
+                            <span class="health-pulse-dot"></span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: #10b981; margin: 0 auto 6px auto; display: block;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                            <div style="font-size: 10px; font-weight: 700; color: #10b981;">SignalR Hub</div>
+                            <div style="font-size: 10px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">SignalR Hub</div>
                         </div>
                     </div>
                 </div>
@@ -340,8 +353,8 @@ else
                 <!-- Support Form -->
                 <form id="helpdeskForm" onsubmit="submitHelpdeskTicket(event)">
                     <div class="form-group" style="margin-bottom: 14px;">
-                        <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Issue Category</label>
-                        <select id="helpdeskCategory" class="form-control" required style="width:100%; background-color: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); padding: 8px 12px; border-radius: var(--radius-sm);">
+                        <label class="form-label" style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; font-family: 'Inter', sans-serif;">Issue Category</label>
+                        <select id="helpdeskCategory" class="form-control" required>
                             <option value="DB">Database Connection / Query Error</option>
                             <option value="UPLOAD">File Upload Failed (QAP / Drawings)</option>
                             <option value="AUTH">Account Authorization / Access</option>
@@ -350,27 +363,42 @@ else
                     </div>
                     
                     <div class="form-group" style="margin-bottom: 14px;">
-                        <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Urgency Level</label>
+                        <label class="form-label" style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; font-family: 'Inter', sans-serif;">Urgency Level</label>
                         <div style="display: flex; gap: 10px;">
-                            <label style="flex: 1; text-align: center; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--text-main); font-size: 12px; font-weight: 600;">
-                                <input type="radio" name="urgency" value="L" checked style="margin-right: 4px;" /> Low
+                            <label class="urgency-card">
+                                <input type="radio" name="urgency" value="L" checked />
+                                <div class="card-content">
+                                    <span class="dot"></span>
+                                    <span>Low</span>
+                                </div>
                             </label>
-                            <label style="flex: 1; text-align: center; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--text-main); font-size: 12px; font-weight: 600;">
-                                <input type="radio" name="urgency" value="M" style="margin-right: 4px;" /> Medium
+                            <label class="urgency-card">
+                                <input type="radio" name="urgency" value="M" />
+                                <div class="card-content">
+                                    <span class="dot"></span>
+                                    <span>Medium</span>
+                                </div>
                             </label>
-                            <label style="flex: 1; text-align: center; padding: 8px; border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); border-radius: var(--radius-sm); cursor: pointer; color: #ef4444; font-size: 12px; font-weight: 700;">
-                                <input type="radio" name="urgency" value="H" style="margin-right: 4px;" /> Critical
+                            <label class="urgency-card">
+                                <input type="radio" name="urgency" value="H" />
+                                <div class="card-content">
+                                    <span class="dot"></span>
+                                    <span>Critical</span>
+                                </div>
                             </label>
                         </div>
                     </div>
                     
                     <div class="form-group" style="margin-bottom: 18px;">
-                        <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Describe the Issue</label>
-                        <textarea id="helpdeskMessage" placeholder="Provide details of the error or access issue..." required style="width:100%; height: 80px; background-color: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: var(--radius-sm); resize: none; font-size: 13px;"></textarea>
+                        <label class="form-label" style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; font-family: 'Inter', sans-serif;">Describe the Issue</label>
+                        <textarea id="helpdeskMessage" class="form-control" placeholder="Provide details of the error or access issue..." required style="height: 90px; resize: none;"></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 14px; font-weight: 700; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);">Submit Ticket</button>
+                    <button type="submit" class="btn-submit-ticket">Submit Ticket</button>
                 </form>
+            </div>
+        </div>
+    </div>
                 
                 <div id="helpdeskSuccess" style="display: none; text-align: center; padding: 16px; background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-md); animation: fadeIn 0.3s ease;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; margin: 0 auto 10px auto; display: block; filter: drop-shadow(0 4px 8px rgba(16,185,129,0.3));"><polyline points="20 6 9 17 4 12"></polyline></svg>

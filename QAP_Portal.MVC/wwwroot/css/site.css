@@ -2018,7 +2018,24 @@ input[type=number] {
     color: var(--primary);
 }
 
+.qap-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 768px) {
+    .content {
+        padding: 16px 12px !important;
+    }
+
+    .app-footer {
+        flex-direction: column !important;
+        gap: 12px !important;
+        text-align: center !important;
+        align-items: center !important;
+    }
+
     .mobile-menu-toggle-btn {
         display: flex !important;
     }
@@ -2122,6 +2139,17 @@ input[type=number] {
     }
 }
 
+@media (max-width: 600px) {
+    .login-tabs {
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+    .login-tab {
+        width: 100% !important;
+        padding: 10px 14px !important;
+    }
+}
+
 /* --- USER PROFILE DROPDOWN STYLING --- */
 .profile-dropdown-card {
     background-color: var(--bg-card) !important;
@@ -2152,3 +2180,182 @@ input[type=number] {
         border: 1px solid var(--border) !important;
     }
 }
+
+/* --- HELPDESK & SYSTEM DIAGNOSTICS MODAL STYLES --- */
+.health-card {
+    position: relative;
+    background: rgba(16, 185, 129, 0.04) !important;
+    border: 1.5px solid rgba(16, 185, 129, 0.15) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 14px 10px !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow: hidden;
+}
+
+.health-card:hover {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border-color: rgba(16, 185, 129, 0.35) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+}
+
+.health-pulse-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: healthPulse 2s infinite;
+}
+
+@keyframes healthPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.urgency-card {
+    display: block;
+    flex: 1;
+}
+
+.urgency-card input[type="radio"] {
+    display: none;
+}
+
+.urgency-card .card-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    background-color: rgba(5, 8, 14, 0.3);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.urgency-card .card-content .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+    transition: all 0.25s ease;
+}
+
+.urgency-card:hover .card-content {
+    border-color: rgba(59, 130, 246, 0.3);
+    color: var(--text-main);
+}
+
+/* Low Checked */
+.urgency-card input[value="L"]:checked + .card-content {
+    border-color: #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.08) !important;
+    color: #10b981 !important;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.15) !important;
+    transform: translateY(-1px);
+}
+.urgency-card input[value="L"]:checked + .card-content .dot {
+    background-color: #10b981 !important;
+    box-shadow: 0 0 8px #10b981;
+}
+
+/* Medium Checked */
+.urgency-card input[value="M"]:checked + .card-content {
+    border-color: #f59e0b !important;
+    background-color: rgba(245, 158, 11, 0.08) !important;
+    color: #f59e0b !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.15) !important;
+    transform: translateY(-1px);
+}
+.urgency-card input[value="M"]:checked + .card-content .dot {
+    background-color: #f59e0b !important;
+    box-shadow: 0 0 8px #f59e0b;
+}
+
+/* Critical Checked */
+.urgency-card input[value="H"]:checked + .card-content {
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.08) !important;
+    color: #ef4444 !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.25) !important;
+    transform: translateY(-1.5px);
+}
+.urgency-card input[value="H"]:checked + .card-content .dot {
+    background-color: #ef4444 !important;
+    box-shadow: 0 0 10px #ef4444;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    transform: rotate(90deg);
+}
+
+.helpdesk-box .form-control {
+    background-color: rgba(5, 8, 14, 0.5) !important;
+    border: 1.5px solid var(--border) !important;
+    color: var(--text-main) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 10px 14px !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.helpdesk-box .form-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.25) !important;
+    background-color: rgba(5, 8, 14, 0.7) !important;
+}
+
+.helpdesk-box .btn-submit-ticket {
+    width: 100%;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
+    box-shadow: 0 4px 15px rgba(24, 90, 219, 0.3) !important;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.helpdesk-box .btn-submit-ticket:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(24, 90, 219, 0.45) !important;
+}
+
