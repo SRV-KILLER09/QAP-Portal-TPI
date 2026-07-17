@@ -56,9 +56,7 @@ else
         <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
         <aside class="sidebar">
             <div class="brand" style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
-                <div class="brand-logo-holder" style="width: 46px; height: 46px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);">
-                    <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 38px; height: auto;" />
-                </div>
+                <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 42px; height: auto; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));" />
                 <div class="brand-info" style="display: flex; flex-direction: column; gap: 3px;">
                     <span class="brand-company" style="font-size: 12.5px; font-weight: 800; color: var(--text-white); letter-spacing: 0.5px; line-height: 1.2; font-family: 'Outfit', sans-serif;">GAIL (India) Ltd.</span>
                     <span class="brand-system" style="font-size: 9.5px; font-weight: 700; color: #3b82f6; letter-spacing: 1px; text-transform: uppercase; line-height: 1.1; font-family: 'Inter', sans-serif;">QAP &amp; TPI Portal</span>
@@ -171,9 +169,7 @@ else
                 </button>
                 
                 <div class="topbar-brand" style="display: flex; align-items: center; gap: 12px; margin-left: 8px;">
-                    <div style="width: 36px; height: 36px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);">
-                        <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 28px; height: auto;" />
-                    </div>
+                    <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 32px; height: auto; flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));" />
                     <div style="display: flex; flex-direction: column; gap: 2px;">
                         <span style="font-size: 13.5px; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px; text-transform: uppercase; font-family: 'Outfit', sans-serif; line-height: 1.2;">GAIL (India) Limited</span>
                         <span style="font-size: 9.5px; font-weight: 700; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; font-family: 'Inter', sans-serif; line-height: 1;">QAP &amp; TPI Portal</span>
@@ -301,14 +297,14 @@ else
     </div>
 
     <!-- Command Palette Overlay Modal -->
-    <div id="cmdPaletteModal" class="cmd-palette-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(3, 5, 8, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100000; justify-content: center; padding-top: 100px;" onclick="closeCommandPalette(event)">
-        <div class="cmd-palette-box" style="width: 90%; max-width: 600px; background-color: #0a0f18; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(24, 90, 219, 0.15);" onclick="event.stopPropagation()">
-            <div class="cmd-input-wrapper" style="display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
+    <div id="cmdPaletteModal" class="cmd-palette-overlay" onclick="closeCommandPalette(event)">
+        <div class="cmd-palette-box" onclick="event.stopPropagation()">
+            <div class="cmd-input-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" style="width: 20px; height: 20px; flex-shrink: 0;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="cmdSearchInput" placeholder="Search QAPs, PO numbers, or navigation actions..." style="width: 100%; background: none; border: none; font-size: 15px; color: #ffffff; outline: none; font-weight: 500;" autocomplete="off" />
+                <input type="text" id="cmdSearchInput" class="cmd-search-input" placeholder="Search QAPs, PO numbers, or navigation actions..." autocomplete="off" />
                 <span style="font-family: monospace; font-size: 10px; color: #5f7596; background-color: rgba(5,8,14,0.6); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); user-select: none;">ESC</span>
             </div>
-            <div id="cmdResultsList" class="cmd-results" style="max-height: 350px; overflow-y: auto; padding: 12px 0;">
+            <div id="cmdResultsList" class="cmd-results">
                 <!-- Results will be loaded dynamically via Javascript -->
             </div>
         </div>
@@ -435,13 +431,13 @@ else
 
         // Command Palette actions list
         const cmdActions = [
-            { name: "Go to Dashboard", desc: "Navigate to home dashboard", url: "/Home/Dashboard", icon: "📊" },
-            { name: "Create New QAP", desc: "Start a new Quality Assurance Plan wizard", url: "/Qap/Create", icon: "➕" },
-            { name: "View My QAPs", desc: "List of your generated QAPs and status", url: "/Qap/MyQaps", icon: "📁" },
-            { name: "Review Pending QAPs", desc: "Admin review queue for QAP approvals", url: "/QapApproval/Index", icon: "✅" },
-            { name: "Helpdesk Support", desc: "Contact system administrator", url: "#support", icon: "📞" },
-            { name: "Toggle Theme", desc: "Switch between dark and light modes", action: "toggleTheme", icon: "🌗" },
-            { name: "Logout", desc: "Log out of current portal session", action: "logout", icon: "🚪" }
+            { name: "Go to Dashboard", desc: "Navigate to home dashboard", url: "/Home/Dashboard", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>` },
+            { name: "Create New QAP", desc: "Start a new Quality Assurance Plan wizard", url: "/Qap/Create", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>` },
+            { name: "View My QAPs", desc: "List of your generated QAPs and status", url: "/Qap/MyQaps", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>` },
+            { name: "Review Pending QAPs", desc: "Admin review queue for QAP approvals", url: "/QapApproval/Index", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` },
+            { name: "Helpdesk Support", desc: "Contact system administrator", url: "#support", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>` },
+            { name: "Toggle Theme", desc: "Switch between dark and light modes", action: "toggleTheme", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>` },
+            { name: "Logout", desc: "Log out of current portal session", action: "logout", icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>` }
         ];
 
         // Open Command Palette
@@ -481,31 +477,19 @@ else
                 return;
             }
             
-            list.innerHTML = filtered.map((act, index) => `
-                <div class="cmd-result-item" onclick="executeCommand(${index})" style="display: flex; align-items: center; gap: 16px; padding: 12px 24px; cursor: pointer; transition: all 0.2s ease;">
-                    <span style="font-size: 18px; width: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${act.icon}</span>
-                    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
-                        <span style="font-size: 13.5px; font-weight: 700; color: #ffffff;">${act.name}</span>
-                        <span style="font-size: 11px; color: #5f7596;">${act.desc}</span>
+            list.innerHTML = filtered.map(act => {
+                const globalIndex = cmdActions.indexOf(act);
+                return `
+                    <div class="cmd-result-item" onclick="executeCommand(${globalIndex})">
+                        <span class="cmd-result-icon">${act.icon}</span>
+                        <div class="cmd-result-info">
+                            <span class="cmd-result-name">${act.name}</span>
+                            <span class="cmd-result-desc">${act.desc}</span>
+                        </div>
+                        <span class="cmd-select-badge">Select</span>
                     </div>
-                    <span style="font-size: 11px; color: #3b82f6; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Select</span>
-                </div>
-            `).join('');
-            
-            // Add hover effects via JS dynamically for robustness
-            const items = list.querySelectorAll('.cmd-result-item');
-            items.forEach(it => {
-                it.addEventListener('mouseenter', () => {
-                    it.style.backgroundColor = 'rgba(59, 130, 246, 0.08)';
-                    it.style.borderLeft = '4px solid #3b82f6';
-                    it.style.paddingLeft = '20px';
-                });
-                it.addEventListener('mouseleave', () => {
-                    it.style.backgroundColor = 'transparent';
-                    it.style.borderLeft = 'none';
-                    it.style.paddingLeft = '24px';
-                });
-            });
+                `;
+            }).join('');
         }
 
         // Execute Command Action
