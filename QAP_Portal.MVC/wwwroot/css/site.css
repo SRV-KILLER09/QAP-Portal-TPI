@@ -2498,4 +2498,109 @@ input[type=number] {
     box-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
 }
 
+/* Custom Scrollbar for Command Palette Results */
+.cmd-results::-webkit-scrollbar {
+    width: 6px;
+}
+.cmd-results::-webkit-scrollbar-track {
+    background: transparent;
+}
+.cmd-results::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.2);
+    border-radius: 3px;
+}
+.cmd-results::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.4);
+}
+
+/* Command Palette Mobile Responsiveness Overrides */
+@media (max-width: 600px) {
+    .cmd-palette-overlay {
+        padding: 24px 16px !important;
+        align-items: flex-start !important;
+        padding-top: 40px !important;
+    }
+
+    .cmd-palette-box {
+        max-height: 80vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .cmd-results {
+        max-height: none !important;
+        flex: 1 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* --- DASHBOARD WELCOME TEXT STYLING --- */
+.welcome-heading {
+    font-size: 32px;
+    line-height: 1.25;
+}
+
+.welcome-subtext {
+    font-size: 14.5px;
+}
+
+@media (max-width: 768px) {
+    .welcome-heading {
+        font-size: 24px !important;
+    }
+    .welcome-subtext {
+        font-size: 13px !important;
+    }
+}
+
+/* --- HORIZONTAL SCROLL FOR TABS ON MOBILE --- */
+@media (max-width: 600px) {
+    .tabs {
+        gap: 16px !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        white-space: nowrap !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none; /* Firefox */
+        padding-bottom: 4px;
+    }
+    
+    .tabs::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+    
+    .tabs a {
+        flex-shrink: 0 !important;
+        padding: 8px 2px !important;
+        font-size: 13.5px !important;
+    }
+}
+
+/* --- HORIZONTAL SCROLL FOR WIZARD STEPS ON MOBILE --- */
+@media (max-width: 768px) {
+    .stepper {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        padding-bottom: 8px !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none; /* Firefox */
+    }
+    
+    .stepper::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+    
+    .step {
+        flex-shrink: 0 !important;
+        min-width: 150px !important;
+        padding: 8px 12px !important;
+        font-size: 12.5px !important;
+    }
+}
+
+
+
 
