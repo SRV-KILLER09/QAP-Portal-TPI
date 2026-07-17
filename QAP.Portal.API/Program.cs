@@ -102,6 +102,40 @@ using (var scope = app.Services.CreateScope())
         command.ExecuteNonQuery();
 
         logger.LogInformation("Database tables check/creation completed successfully.");
+
+        // Auto-seed QAP_USERS if table is empty
+        try
+        {
+            var userCount = await context.QapUsers.CountAsync();
+            if (userCount == 0)
+            {
+                logger.LogInformation("Seeding default QAP_USERS...");
+                context.QapUsers.Add(new QAP.Portal.API.Models.QapUser
+                {
+                    Email = "vardaansaxena096@gmail.com",
+                    DisplayName = "Vardaan Saxena",
+                    Role = "Initiator",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
+                    IsActive = 1,
+                    CreatedOn = DateTime.Now
+                });
+                context.QapUsers.Add(new QAP.Portal.API.Models.QapUser
+                {
+                    Email = "mansi@gail.co.in",
+                    DisplayName = "Mansi",
+                    Role = "Initiator",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
+                    IsActive = 1,
+                    CreatedOn = DateTime.Now
+                });
+                await context.SaveChangesAsync();
+                logger.LogInformation("Default QAP_USERS seeded successfully.");
+            }
+        }
+        catch (Exception seedEx)
+        {
+            logger.LogWarning(seedEx, "Failed to seed default QAP_USERS.");
+        }
     }
     catch (Exception ex)
     {

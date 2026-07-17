@@ -128,4 +128,11 @@ namespace QAP_Portal.MVC.Models.Api
         public string AdminName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
     }
+
+    public class QapUserLoginResult
+    {
+        public string Email { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+    }
 }

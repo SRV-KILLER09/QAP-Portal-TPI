@@ -73,7 +73,17 @@ namespace QAP.Portal.API.Controllers
             var existing = await _context.QapLineGroups.FindAsync(id);
             if (existing == null) return NotFound();
 
+            // Delete child items
+            var childItems = await _context.QapGroupItems.Where(x => x.GroupId == id).ToListAsync();
+            _context.QapGroupItems.RemoveRange(childItems);
+
+            // Delete action logs
+            var actionLogs = await _context.GroupActionLogs.Where(x => x.GroupId == id).ToListAsync();
+            _context.GroupActionLogs.RemoveRange(actionLogs);
+
+            // Delete the line group itself
             _context.QapLineGroups.Remove(existing);
+
             await _context.SaveChangesAsync();
             return NoContent();
         }

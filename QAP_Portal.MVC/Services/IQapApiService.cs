@@ -74,5 +74,12 @@ namespace QAP_Portal.MVC.Services
         // ADMIN_USERS validation
         Task<bool> ValidateAdminAsync(string email);
         Task<QAP_Portal.MVC.Models.Api.AdminLoginResult?> LoginAdminAsync(string email, string password);
+
+        // QAP_USERS validation
+        Task<QAP_Portal.MVC.Models.Api.QapUserLoginResult?> LoginQapUserAsync(string email, string password);
+
+        // New endpoints for real-time creation and delete support
+        Task<bool> DeleteQapGroupAsync(int groupId);
+        Task<bool> CreatePurchaseOrderAsync(CreatePoViewModel model);
     }
 }

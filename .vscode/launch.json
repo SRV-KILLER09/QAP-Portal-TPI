@@ -1,0 +1,49 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run API Backend",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/QAP.Portal.API/bin/Debug/net10.0/QAP.Portal.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/QAP.Portal.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Run MVC Frontend",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-mvc",
+            "program": "${workspaceFolder}/QAP_Portal.MVC/bin/Debug/net10.0/QAP_Portal.MVC.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/QAP_Portal.MVC",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run both MVC + API",
+            "configurations": [
+                "Run API Backend",
+                "Run MVC Frontend"
+            ]
+        }
+    ]
+}

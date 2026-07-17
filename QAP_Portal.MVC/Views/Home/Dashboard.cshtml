@@ -2,36 +2,98 @@
 @{
     ViewData["Title"] = "Dashboard";
     bool isAdmin = Model.Role == nameof(UserRole.Admin);
+    var displayName = Context.Session.GetString("DisplayName") ?? (isAdmin ? "Admin User" : "Initiator User");
+    
+    // Calculate dynamic personalized greeting
+    var hour = DateTime.Now.Hour;
+    var greeting = "Welcome back";
+    if (hour < 12) greeting = "Good morning";
+    else if (hour < 17) greeting = "Good afternoon";
+    else greeting = "Good evening";
 }
 
-<h1 class="page-title">Dashboard</h1>
-<p class="page-subtitle">
-    @(isAdmin ? "Overview of all QAPs awaiting review, approved and rejected." : "Overview of the QAPs you've created.")
-</p>
+<div class="dash-welcome-banner animate-fade-in" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; margin-bottom: 28px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
+    <!-- Real-time SCADA System Clock -->
+    <div class="scada-time-container" style="position: absolute; top: 24px; right: 30px; display: flex; align-items: center; gap: 8px; background-color: rgba(5, 8, 14, 0.6); border: 1px solid var(--border); padding: 8px 14px; border-radius: var(--radius-sm); font-family: monospace; font-size: 11px; z-index: 10;">
+        <span style="color: #3b82f6; font-weight: 700; letter-spacing: 0.5px;">SYSTEM TIME:</span>
+        <span id="liveClock" style="color: #e2e8f0; font-weight: 600; letter-spacing: 0.5px;">--/--/----, --:--:-- --</span>
+    </div>
 
-<div class="stat-grid">
-    <div class="stat-card"><div class="stat-value">@Model.Total</div><div class="stat-label">Total QAPs</div></div>
-    <div class="stat-card"><div class="stat-value">@Model.DraftCount</div><div class="stat-label">Draft</div></div>
-    <div class="stat-card"><div class="stat-value">@Model.SubmittedCount</div><div class="stat-label">Submitted</div></div>
-    <div class="stat-card"><div class="stat-value">@Model.ApprovedCount</div><div class="stat-label">Approved</div></div>
-    <div class="stat-card"><div class="stat-value">@Model.RejectedCount</div><div class="stat-label">Rejected</div></div>
+    <div style="position: relative; z-index: 2;">
+        <span style="font-size: 11px; font-weight: 800; color: #3b82f6; letter-spacing: 1.5px; text-transform: uppercase;">Dashboard</span>
+        <h1 style="font-size: 32px; font-weight: 800; color: var(--text-white); margin: 8px 0 12px 0;">@greeting, <span class="username-gradient">@displayName</span></h1>
+        <p style="font-size: 14.5px; color: var(--text-muted); margin-bottom: 24px; max-width: 600px; line-height: 1.5;">
+            @(isAdmin ? "Here's what's happening across the GAIL Inspection Management system right now." : "Here's an overview of your active Quality Assurance Plans (QAP) and inspection workflows.")
+        </p>
+        
+        <div class="dash-quick-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            @if (isAdmin)
+            {
+                <a class="btn btn-primary" asp-controller="QapApproval" asp-action="Index" asp-route-status="Submitted" style="display: flex; align-items: center; gap: 8px;">
+                    <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    Review Pending QAPs
+                </a>
+                <a class="btn btn-secondary" asp-controller="QapApproval" asp-action="Index">View All QAPs</a>
+                <button type="button" class="btn btn-primary" onclick="openPushModal()" style="display: flex; align-items: center; gap: 8px; background-color: #10b981; border-color: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+                    <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    Broadcast Alert
+                </button>
+            }
+            else
+            {
+                <a class="btn btn-primary" asp-controller="Qap" asp-action="Create" style="display: flex; align-items: center; gap: 8px;">
+                    <span>+</span> New QAP
+                </a>
+                <a class="btn btn-secondary" asp-controller="Qap" asp-action="MyQaps">View My QAPs</a>
+            }
+            <a class="btn btn-secondary" href="#support">Helpdesk Support</a>
+        </div>
+    </div>
+    
+    <!-- Ambient subtle background accent blob inside the card -->
+    <div style="position: absolute; right: -50px; bottom: -50px; width: 200px; height: 200px; background-color: var(--primary); opacity: 0.08; filter: blur(50px); border-radius: 50%; pointer-events: none;"></div>
 </div>
 
-<div class="dash-actions">
-    @if (isAdmin)
-    {
-        <a class="btn btn-primary" asp-controller="QapApproval" asp-action="Index" asp-route-status="Submitted">Review Pending QAPs</a>
-        <a class="btn btn-secondary" asp-controller="QapApproval" asp-action="Index">View All QAPs</a>
-    }
-    else
-    {
-        <a class="btn btn-primary" asp-controller="Qap" asp-action="Create">+ New QAP</a>
-        <a class="btn btn-secondary" asp-controller="Qap" asp-action="MyQaps">View My QAPs</a>
-    }
+<div class="scada-stats-grid" style="margin-bottom: 28px;">
+    <!-- Card 1: Total -->
+    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
+            @Model.Total
+        </div>
+        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Total QAPs</div>
+    </div>
+    <!-- Card 2: Draft -->
+    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
+            @Model.DraftCount
+        </div>
+        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Draft QAPs</div>
+    </div>
+    <!-- Card 3: Submitted -->
+    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
+            @Model.SubmittedCount
+        </div>
+        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Submitted QAPs</div>
+    </div>
+    <!-- Card 4: Approved -->
+    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
+            @Model.ApprovedCount
+        </div>
+        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Approved QAPs</div>
+    </div>
+    <!-- Card 5: Rejected -->
+    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
+            @Model.RejectedCount
+        </div>
+        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Rejected QAPs</div>
+    </div>
 </div>
 
-<div class="card" style="margin-top:24px;">
-    <div class="label" style="margin-bottom:10px;">Recent QAPs</div>
+<div class="card animate-fade-in" style="animation-delay: 0.1s;">
+    <div class="label" style="margin-bottom:16px; font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-white);">Recent QAPs</div>
     <table class="qap-table">
         <thead>
             <tr><th>QAP Number</th><th>PO Number</th><th>Date</th><th>Status</th><th></th></tr>
@@ -44,15 +106,126 @@
         @foreach (var qap in Model.RecentQaps)
         {
             <tr>
-                <td>@qap.QapNumber</td>
-                <td>@qap.PoNumber</td>
+                <td style="font-weight: 700; color: var(--text-white);">@qap.QapNumber</td>
+                <td style="font-weight: 700; color: var(--text-muted);">@qap.PoNumber</td>
                 <td>@(qap.InitiatedOn?.ToString("M/d/yyyy") ?? "-")</td>
                 <td><span class="pill pill-@qap.Status.ToString().ToLower()">@qap.Status</span></td>
                 <td>
-                    <a asp-controller="@(isAdmin ? "QapApproval" : "Qap")" asp-action="Details" asp-route-id="@qap.GroupId">View &gt;</a>
+                    <a asp-controller="@(isAdmin ? "QapApproval" : "Qap")" asp-action="Details" asp-route-id="@qap.GroupId" style="color: #60a5fa; text-decoration: none; font-weight: 700;">View &gt;</a>
                 </td>
             </tr>
         }
         </tbody>
     </table>
 </div>
+
+<style>
+    .username-gradient {
+        background: linear-gradient(135deg, #ffffff 30%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+</style>
+
+<script>
+    (function() {
+        function updateClock() {
+            const clockEl = document.getElementById('liveClock');
+            if (!clockEl) return;
+            
+            const now = new Date();
+            
+            // Format date: dd/mm/yyyy
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            
+            // Format time: hh:mm:ss am/pm
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const displayHours = String(hours).padStart(2, '0');
+            
+            clockEl.textContent = `${day}/${month}/${year}, ${displayHours}:${minutes}:${seconds} ${ampm}`;
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+    })();
+</script>
+
+@if (isAdmin)
+{
+    <!-- Admin Broadcast Notification Modal -->
+    <div id="pushNotificationModal" class="cmd-palette-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(3, 5, 8, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100001; justify-content: center; align-items: center;" onclick="closePushModal()">
+        <div style="width: 90%; max-width: 500px; background-color: #0a0f18; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(16, 185, 129, 0.15);" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--border);">
+                <span style="font-size: 13px; font-weight: 800; color: #10b981; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981; animation: pulseGlow 1s infinite alternate;"></span>
+                    Broadcast System Alert
+                </span>
+                <button onclick="closePushModal()" style="background: none; border: none; color: #5f7596; font-size: 22px; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Announcement Title</label>
+                    <input type="text" id="pushTitleInput" placeholder="e.g. System Maintenance scheduled" style="background-color: rgba(5,8,14,0.6); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; color: #ffffff; outline: none; transition: border-color 0.2s;" />
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Announcement Message</label>
+                    <textarea id="pushMessageInput" rows="3" placeholder="e.g. Inspection servers undergoing security patch at 12:00 PM." style="background-color: rgba(5,8,14,0.6); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; color: #ffffff; outline: none; resize: none; transition: border-color 0.2s;"></textarea>
+                </div>
+                <button type="button" onclick="submitBroadcast()" style="background-color: #10b981; color: #ffffff; border: none; border-radius: var(--radius-sm); padding: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Transmit Announcement
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPushModal() {
+            document.getElementById('pushNotificationModal').style.display = 'flex';
+            document.getElementById('pushTitleInput').value = '';
+            document.getElementById('pushMessageInput').value = '';
+            setTimeout(() => document.getElementById('pushTitleInput').focus(), 50);
+        }
+
+        function closePushModal() {
+            document.getElementById('pushNotificationModal').style.display = 'none';
+        }
+
+        function submitBroadcast() {
+            const title = document.getElementById('pushTitleInput').value.trim();
+            const message = document.getElementById('pushMessageInput').value.trim();
+            if (!title || !message) {
+                alert('Please enter both title and message.');
+                return;
+            }
+
+            fetch('/Home/PushNotification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `title=${encodeURIComponent(title)}&message=${encodeURIComponent(message)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    closePushModal();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('An error occurred while broadcasting.');
+            });
+        }
+    </script>
+}

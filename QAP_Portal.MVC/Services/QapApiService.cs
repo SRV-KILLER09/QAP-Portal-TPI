@@ -383,6 +383,29 @@ public async Task<byte[]?> GetPoCopyBytesAsync(string poNumber)
             }
         }
 
+        public async Task<QAP_Portal.MVC.Models.Api.QapUserLoginResult?> LoginQapUserAsync(string email, string password)
+        {
+            try
+            {
+                var requestBody = new { Email = email, Password = password };
+                var response = await _http.PostAsJsonAsync("user/login", requestBody, JsonOpts);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMsg = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("User login failed for {Email}. Status: {Status}, Error: {Error}", email, response.StatusCode, errorMsg);
+                    return null;
+                }
+
+                return await response.Content.ReadFromJsonAsync<QAP_Portal.MVC.Models.Api.QapUserLoginResult>(JsonOpts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error performing user login for {Email}", email);
+                return null;
+            }
+        }
+
 
 private async Task<List<T>> GetJsonListAsync<T>(string relativeUrl)
 {

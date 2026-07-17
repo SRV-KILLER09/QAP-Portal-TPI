@@ -198,19 +198,58 @@ body {
 }
 
 .login-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(10, 15, 24, 0.7); /* Translucent dark background matching SCADA */
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(59, 130, 246, 0.25); /* Subtle blue glow border */
     border-radius: var(--radius-lg);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     padding: 40px;
     overflow: hidden;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-body.dark-theme .login-card {
-    background: rgba(11, 19, 41, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* Force dark-glass theme on login card children regardless of global theme state */
+.login-card .form-label-fancy {
+    color: #e2e8f0 !important;
+}
+
+.login-card .form-help {
+    color: #5f7596 !important;
+}
+
+.login-card .login-tabs {
+    background-color: rgba(5, 8, 14, 0.8) !important;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.login-card .login-tab {
+    color: #5f7596 !important;
+}
+
+.login-card .login-tab.active {
+    background-color: #185adb !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(24, 90, 219, 0.25) !important;
+}
+
+.login-card .login-tab:hover {
+    color: #ffffff !important;
+}
+
+.login-card .form-control-fancy {
+    background-color: rgba(5, 8, 14, 0.6) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.login-card .form-control-fancy:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.25) !important;
+}
+
+.login-card .input-icon {
+    color: #5f7596 !important;
 }
 
 .login-tabs {
@@ -512,24 +551,27 @@ body.dark-theme .login-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--sidebar-text);
+    color: #5f7596; /* steel-grey inactive text */
     text-decoration: none;
-    padding: 12px 16px;
-    font-size: 14px;
+    padding: 10px 16px;
+    font-size: 13.5px;
     font-weight: 600;
-    border-radius: var(--radius-md);
-    transition: all 0.2s ease;
+    border-radius: 30px !important; /* capsule shape */
+    border-left: 3px solid transparent;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-white);
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    color: var(--text-white) !important;
 }
 
 .nav-link.active {
-    background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
-    color: var(--text-white);
-    box-shadow: var(--shadow-md);
+    background-color: rgba(24, 90, 219, 0.08) !important;
+    border-color: rgba(24, 90, 219, 0.15) !important;
+    border-left: 3px solid #3b82f6 !important; /* glowing active bar */
+    color: #ffffff !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
 
 .nav-link.disabled {
@@ -890,6 +932,16 @@ table.qap-table td a:hover {
     transition: all 0.2s ease;
 }
 
+.btn:disabled, .btn.disabled {
+    opacity: 0.45 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background-color: rgba(10, 15, 24, 0.5) !important;
+    color: #5f7596 !important;
+    border-color: var(--border) !important;
+}
+
 .btn-primary {
     background-color: var(--primary);
     color: var(--text-white);
@@ -1030,6 +1082,96 @@ table.qap-table td a:hover {
     font-size: 14.5px;
     font-weight: 700;
     color: var(--text-main);
+}
+
+/* SCADA Stats Bar / Detail Boxes */
+.scada-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .scada-stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .scada-stats-bar {
+        grid-template-columns: 1fr;
+    }
+}
+
+.scada-stat-box {
+    background-color: var(--bg-main); /* Deep dark background */
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scada-stat-box:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 12px rgba(24, 90, 219, 0.1);
+}
+
+.scada-stat-box .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.scada-stat-box .stat-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+}
+
+/* SCADA Stats Cards Grid & Cards */
+.scada-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .scada-stats-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .scada-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .scada-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.scada-stat-card {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+
+.scada-stat-card:hover {
+    border-color: rgba(59, 130, 246, 0.4) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 15px rgba(24, 90, 219, 0.15) !important;
 }
 
 .doc-link {
@@ -1715,4 +1857,77 @@ body.dark-theme .welcome-toast {
 #form-admin .input-wrapper input:focus {
     border-color: var(--secondary) !important;
     box-shadow: 0 0 0 4px rgba(255, 127, 39, 0.15), 0 0 12px rgba(255, 127, 39, 0.2) !important;
+}
+
+/* Sidebar Action Capsules */
+.sidebar-capsule-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 50px !important;
+    padding: 10px 16px !important;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.sidebar-capsule-btn:hover {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+    border-color: rgba(59, 130, 246, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(24, 90, 219, 0.1) !important;
+}
+
+.sidebar-capsule-btn .capsule-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebar-capsule-btn .capsule-text {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+}
+
+.sidebar-capsule-btn .capsule-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    color: #3b82f6 !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+}
+
+/* System Announcement Keyframes */
+@keyframes alertSlideIn {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes alertSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
 }

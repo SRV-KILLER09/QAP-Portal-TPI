@@ -1,9 +1,11 @@
 using QAP_Portal.MVC.Services;
+using QAP_Portal.MVC.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC + Razor views
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 // Session is used by HomeController/QapController/QapApprovalController
 // to remember the fake "logged in" role + email (see HomeController.SetRole).
@@ -39,6 +41,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllerRoute(
     name: "default",

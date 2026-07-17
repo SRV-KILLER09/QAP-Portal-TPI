@@ -40,11 +40,23 @@
     <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); border-bottom: 1.5px solid var(--border); padding-bottom: 8px;">
         Purchase Order Information
     </h3>
-    <div class="detail-grid">
-        <div><div class="label">PO Number</div><div class="value" style="color: var(--primary);">@Model.PoNumber</div></div>
-        <div><div class="label">PO Date</div><div class="value">@(Model.PoDate?.ToString("yyyy-MM-dd") ?? "-")</div></div>
-        <div><div class="label">Vendor Code</div><div class="value">@(Model.VendorCode ?? "-")</div></div>
-        <div><div class="label">PO Description</div><div class="value">@(Model.PoDescription ?? "-")</div></div>
+    <div class="scada-stats-bar">
+        <div class="scada-stat-box">
+            <div class="stat-label">PO Number</div>
+            <div class="stat-value" style="color: #60a5fa;">@Model.PoNumber</div>
+        </div>
+        <div class="scada-stat-box">
+            <div class="stat-label">PO Date</div>
+            <div class="stat-value">@(Model.PoDate?.ToString("yyyy-MM-dd") ?? "-")</div>
+        </div>
+        <div class="scada-stat-box">
+            <div class="stat-label">Vendor Code</div>
+            <div class="stat-value">@(Model.VendorCode ?? "-")</div>
+        </div>
+        <div class="scada-stat-box">
+            <div class="stat-label">PO Description</div>
+            <div class="stat-value" style="font-size: 13.5px; word-break: break-all;">@(Model.PoDescription ?? "-")</div>
+        </div>
     </div>
 </div>
 

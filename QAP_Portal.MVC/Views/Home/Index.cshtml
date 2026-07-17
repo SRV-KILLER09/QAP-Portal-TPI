@@ -67,10 +67,34 @@
                         <input type="text"
                                id="initiator-email"
                                name="email"
-                               placeholder="initiator@gail.in"
+                               placeholder="e.g. mansi@gail.co.in"
                                required />
                     </div>
                     <span class="input-help">Enter your corporate email address to access QAP requests.</span>
+                </div>
+
+                <div class="form-group" style="margin-top: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label class="form-label-fancy" for="initiator-password" style="margin-bottom: 0;">Password</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <input type="password"
+                               id="initiator-password"
+                               name="password"
+                               placeholder="••••••••"
+                               required />
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('initiator-password', 'eye-icon-initiator')">
+                            <svg id="eye-icon-initiator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="input-help">Default seeded password is <strong>password123</strong>.</span>
                 </div>
 
                 <button type="submit" class="btn-login btn-login-initiator">
@@ -115,7 +139,7 @@
                                name="password"
                                placeholder="••••••••"
                                required />
-                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('admin-password', 'eye-icon')">
                             <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
@@ -160,9 +184,9 @@
         }
     }
 
-    function togglePasswordVisibility() {
-        const passwordInput = document.getElementById('admin-password');
-        const eyeIcon = document.getElementById('eye-icon');
+    function togglePasswordVisibility(inputId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const eyeIcon = document.getElementById(iconId);
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
             eyeIcon.innerHTML = `

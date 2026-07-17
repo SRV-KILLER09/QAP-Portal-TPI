@@ -259,3 +259,4 @@ C:\Users\HP\QAP_Portal\QAP.Portal.API\obj\Debug\net10.0\QAP.Portal.API.pdb
 C:\Users\HP\QAP_Portal\QAP.Portal.API\obj\Debug\net10.0\QAP.Portal.API.genruntimeconfig.cache
 C:\Users\HP\QAP_Portal\QAP.Portal.API\obj\Debug\net10.0\ref\QAP.Portal.API.dll
 C:\Users\HP\QAP_Portal\QAP.Portal.API\bin\Debug\net10.0\BCrypt-Net-Next.dll
+C:\Users\HP\QAP_Portal\QAP.Portal.API\obj\Debug\net10.0\QAP.Portal.API.sourcelink.json

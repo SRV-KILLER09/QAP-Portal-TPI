@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using QAP_Portal.MVC.Models;
 using QAP_Portal.MVC.Services;
+using Microsoft.AspNetCore.SignalR;
+using QAP_Portal.MVC.Hubs;
 
 namespace QAP_Portal.MVC.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IQapApiService _api;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public HomeController(IQapApiService api)
+        public HomeController(IQapApiService api, IHubContext<NotificationHub> hubContext)
         {
             _api = api;
+            _hubContext = hubContext;
         }
 
         private string? CurrentRole => HttpContext.Session.GetString("Role");
@@ -58,13 +62,36 @@ namespace QAP_Portal.MVC.Controllers
                 HttpContext.Session.SetString("Email", email);
                 HttpContext.Session.SetString("AdminName", adminResult.AdminName);
                 HttpContext.Session.SetString("AdminId", adminResult.AdminId);
+                HttpContext.Session.SetString("DisplayName", adminResult.AdminName);
                 TempData["Success"] = $"Welcome back, Admin {adminResult.AdminName}!";
             }
             else
             {
-                HttpContext.Session.SetString("Role", role);
-                HttpContext.Session.SetString("Email", email);
-                TempData["Success"] = $"Access Granted! Welcome to GAIL QAP System.";
+                if (!string.IsNullOrWhiteSpace(password))
+                {
+                    var userResult = await _api.LoginQapUserAsync(email, password);
+                    if (userResult == null)
+                    {
+                        TempData["Error"] = "Invalid initiator credentials or account inactive.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    HttpContext.Session.SetString("Role", userResult.Role);
+                    HttpContext.Session.SetString("Email", userResult.Email);
+                    HttpContext.Session.SetString("DisplayName", userResult.DisplayName);
+                    TempData["Success"] = $"Welcome back, {userResult.DisplayName}!";
+                }
+                else
+                {
+                    HttpContext.Session.SetString("Role", role);
+                    HttpContext.Session.SetString("Email", email);
+                    
+                    var parts = email.Split('@');
+                    var displayName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(parts[0].Replace(".", " "));
+                    HttpContext.Session.SetString("DisplayName", displayName);
+                    
+                    TempData["Success"] = $"Access Granted! Welcome to GAIL QAP System.";
+                }
             }
 
             return RedirectToAction(nameof(Dashboard));
@@ -98,6 +125,25 @@ namespace QAP_Portal.MVC.Controllers
                 .ToList();
 
             return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PushNotification(string title, string message)
+        {
+            if (CurrentRole != nameof(UserRole.Admin))
+            {
+                return Json(new { success = false, message = "Access Denied: Only Admin can broadcast notifications." });
+            }
+
+            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(message))
+            {
+                return Json(new { success = false, message = "Title and message are required." });
+            }
+
+            var timestamp = DateTime.Now.ToString("dd/MM/yyyy, hh:mm:ss tt");
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", title, message, timestamp);
+
+            return Json(new { success = true });
         }
 
         [HttpPost]

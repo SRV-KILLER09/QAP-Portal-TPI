@@ -28,4 +28,5 @@ C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\refint\QAP_Portal.MVC.dl
 C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\QAP_Portal.MVC.pdb
 C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\QAP_Portal.MVC.genruntimeconfig.cache
 C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\ref\QAP_Portal.MVC.dll
-C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\compressed\yxl0my0umg-{0}-1t02mp5y76-1t02mp5y76.gz
+C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\QAP_Portal.MVC.sourcelink.json
+C:\Users\HP\QAP_Portal\QAP_Portal.MVC\obj\Debug\net10.0\compressed\yxl0my0umg-{0}-h32z9p8r3w-h32z9p8r3w.gz

@@ -26,6 +26,8 @@ namespace QAP.Portal.API.Data
         // Existing SQL table: ADMIN_USERS
         public DbSet<AdminUser> AdminUsers { get; set; } = null!;
 
+        public DbSet<QapUser> QapUsers { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,6 +75,18 @@ namespace QAP.Portal.API.Data
                     .HasColumnName("CREATED_ON");
             });
 
+            // QAP_USERS table mapping
+            modelBuilder.Entity<QapUser>(entity =>
+            {
+                entity.ToTable("QAP_USERS");
+                entity.HasKey(x => x.Email);
+                entity.Property(x => x.Email).HasColumnName("EMAIL");
+                entity.Property(x => x.DisplayName).HasColumnName("DISPLAY_NAME");
+                entity.Property(x => x.Role).HasColumnName("ROLE");
+                entity.Property(x => x.PasswordHash).HasColumnName("PASSWORD_HASH");
+                entity.Property(x => x.IsActive).HasColumnName("IS_ACTIVE");
+                entity.Property(x => x.CreatedOn).HasColumnName("CREATED_ON");
+            });
 
             base.OnModelCreating(modelBuilder);
         }

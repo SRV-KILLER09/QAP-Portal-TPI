@@ -35,32 +35,10 @@
     </script>
 </head>
 <body class="@(loggedIn ? "" : "login-wrapper")">
-    <!-- GAIL Portal 3D Preloader -->
+    <!-- Interactive Preloader -->
     @if (!loggedIn)
     {
-        <div id="appPreloader" class="preloader-overlay">
-            <div class="preloader-spinner-container">
-                <div class="preloader-3d-container">
-                    <div class="preloader-3d-coin">
-                        <div class="coin-side coin-front" style="background: #ffffff; border-color: #f1c40f; box-shadow: 0 0 35px rgba(241, 196, 15, 0.4), inset 0 0 20px rgba(241, 196, 15, 0.2);">
-                            <img src="/images/gail_logo.png" alt="GAIL Logo" style="width: 105px; height: auto; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));" />
-                        </div>
-                        <div class="coin-side coin-back">
-                            <svg class="preloader-gail-flame" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M50 20C50 20 62 35 62 48C62 60 54 70 42 70C30 70 22 60 22 48C22 35 34 20 34 20C34 20 38 36 46 38C54 40 50 20 50 20Z" fill="url(#flameGradient3D)"/>
-                                <defs>
-                                    <linearGradient id="flameGradient3D" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stop-color="#ff7f27" />
-                                        <stop offset="100%" stop-color="#ff3d00" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="preloader-text">Loading GAIL Portal...</div>
-            </div>
-        </div>
+        <partial name="_Preloader" />
     }
 @if (!loggedIn)
 {
@@ -85,41 +63,99 @@ else
                     <span class="brand-system" style="font-size: 9.5px; font-weight: 700; color: #3b82f6; letter-spacing: 1px; text-transform: uppercase; line-height: 1.1;">QAP &amp; TPI Portal</span>
                 </div>
             </div>
-            <nav>
-                @if (isAdmin)
-                {
-                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "QapApproval" ? "active" : "")"
-                       asp-controller="QapApproval" asp-action="Index">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                        <span>QAP Approvals</span>
+
+            <!-- Interactive Action Capsules -->
+            <div class="sidebar-actions" style="padding: 0 24px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Notifications Button -->
+                <button type="button" class="sidebar-capsule-btn" id="sidebarNotificationsBtn" onclick="toggleNotificationsMenu()">
+                    <span class="capsule-icon-wrapper" style="color: #3b82f6;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </span>
+                    <span class="capsule-text">Notifications</span>
+                    <span class="capsule-badge">4</span>
+                </button>
+
+                <!-- Command Palette Button -->
+                <button type="button" class="sidebar-capsule-btn" id="sidebarCmdPaletteBtn" onclick="openCommandPalette()">
+                    <span class="capsule-icon-wrapper" style="color: #0ea5e9;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 1px; flex: 1;">
+                        <span class="capsule-text" style="line-height: 1;">Command</span>
+                        <span class="capsule-subtext" style="font-size: 8.5px; color: #5f7596; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Palette</span>
+                    </div>
+                    <div class="capsule-shortcut" style="display: flex; flex-direction: column; align-items: flex-end; font-family: monospace; font-size: 8px; color: #5f7596; font-weight: 700; line-height: 1.1; margin-right: 4px;">
+                        <span>CTRL/⌘</span>
+                        <span>K</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="sidebar-nav-card" style="background-color: rgba(5, 8, 14, 0.4); border: 1px solid var(--border); border-radius: var(--radius-lg); margin: 0 20px 20px 20px; padding: 16px 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="sidebar-nav-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; padding: 0 12px 12px 12px; border-bottom: 1px solid rgba(255,255,255,0.02); margin-bottom: 8px;">
+                    <span>Core Workspace</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 11px; height: 11px; opacity: 0.8;"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </div>
+                
+                <nav style="display: flex; flex-direction: column; gap: 4px;">
+                    <!-- Dashboard link (global for both roles) -->
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"
+                       asp-controller="Home" asp-action="Dashboard">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <span>Dashboard</span>
                     </a>
-                    <a class="nav-link disabled" title="Coming soon">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-                        <span>Inspections</span>
-                    </a>
-                    <a class="nav-link disabled" title="Coming soon">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                        <span>Purchase Orders</span>
-                    </a>
-                }
-                else
-                {
-                    <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")"
-                       asp-controller="Qap" asp-action="Create">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                        <span>QAP Request</span>
-                    </a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "MyQaps" ? "active" : "")"
-                       asp-controller="Qap" asp-action="MyQaps">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                        <span>My QAPs</span>
-                    </a>
-                    <a class="nav-link disabled" title="Coming soon">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                        <span>TPI Request</span>
-                    </a>
-                }
-            </nav>
+                    
+                    @if (isAdmin)
+                    {
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "QapApproval" ? "active" : "")"
+                           asp-controller="QapApproval" asp-action="Index">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                            <span>QAP Approvals</span>
+                        </a>
+                        <a class="nav-link disabled" title="Coming soon">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                            <span>Inspections</span>
+                        </a>
+                        <a class="nav-link disabled" title="Coming soon">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                            <span>Purchase Orders</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Qap" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")"
+                           asp-controller="Qap" asp-action="Create">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                            <span>QAP Request</span>
+                        </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Qap" && ViewContext.RouteData.Values["action"]?.ToString() == "MyQaps" ? "active" : "")"
+                           asp-controller="Qap" asp-action="MyQaps">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                            <span>My QAPs</span>
+                        </a>
+                        <a class="nav-link disabled" title="Coming soon">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            <span>TPI Request</span>
+                        </a>
+                    }
+                </nav>
+            </div>
+
+            <!-- Sidebar Bottom Profile Section -->
+            @{
+                var displayName = Context.Session.GetString("DisplayName") ?? (isAdmin ? "Admin User" : "Initiator User");
+                var displayInitial = !string.IsNullOrEmpty(displayName) ? displayName[0].ToString().ToUpper() : "U";
+                var welcomeRole = role?.ToUpper() ?? "USER";
+            }
+            <div class="sidebar-profile" style="margin-top: auto; padding: 20px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px;">
+                <div class="profile-avatar" style="width: 36px; height: 36px; border-radius: 50%; background-color: var(--primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; text-transform: uppercase; box-shadow: 0 4px 10px rgba(24, 90, 219, 0.25);">
+                    @displayInitial
+                </div>
+                <div class="profile-info" style="display: flex; flex-direction: column; gap: 2px; overflow: hidden;">
+                    <span class="profile-name" style="font-size: 13px; font-weight: 700; color: var(--text-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@displayName</span>
+                    <span class="profile-role" style="font-size: 9.5px; font-weight: 800; color: #3b82f6; letter-spacing: 0.5px; text-transform: uppercase;">@welcomeRole</span>
+                </div>
+            </div>
         </aside>
 
         <div class="main">
@@ -180,6 +216,46 @@ else
         </div>
     }
 
+    <!-- Notifications Dropdown Overlay -->
+    <div id="notificationsDropdown" class="notifications-dropdown" style="display: none; position: absolute; top: 125px; left: 260px; width: 340px; background-color: #0a0f18; border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-md); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(24, 90, 219, 0.15); z-index: 99999; padding: 14px 0; overflow: hidden;">
+        <div style="padding: 0 16px 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11px; font-weight: 800; color: #ffffff; letter-spacing: 1px; text-transform: uppercase;">Recent System Activity</span>
+            <span style="font-size: 9px; font-weight: 800; color: #10b981; background-color: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">4 Active</span>
+        </div>
+        <div style="max-height: 280px; overflow-y: auto;">
+            <div class="notification-item" style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 4px;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #e2e8f0;">QAP #QAP-432343-A Approved</div>
+                <div style="font-size: 9.5px; color: #5f7596;">Approved by Admin &middot; 2 hours ago</div>
+            </div>
+            <div class="notification-item" style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 4px;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #e2e8f0;">New QAP draft initiated</div>
+                <div style="font-size: 9.5px; color: #5f7596;">Vendor Code GAIL-VEN-09 &middot; 5 hours ago</div>
+            </div>
+            <div class="notification-item" style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 4px;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #e2e8f0;">TPI inspection requested</div>
+                <div style="font-size: 9.5px; color: #5f7596;">Inspection scheduled &middot; 1 day ago</div>
+            </div>
+            <div class="notification-item" style="padding: 12px 16px; display: flex; flex-direction: column; gap: 4px;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #e2e8f0;">System parameters nominal</div>
+                <div style="font-size: 9.5px; color: #10b981; font-weight: 700;">Status: ONLINE &middot; 2 days ago</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette Overlay Modal -->
+    <div id="cmdPaletteModal" class="cmd-palette-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(3, 5, 8, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100000; justify-content: center; padding-top: 100px;" onclick="closeCommandPalette(event)">
+        <div class="cmd-palette-box" style="width: 90%; max-width: 600px; background-color: #0a0f18; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(24, 90, 219, 0.15);" onclick="event.stopPropagation()">
+            <div class="cmd-input-wrapper" style="display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--border);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" style="width: 20px; height: 20px; flex-shrink: 0;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="cmdSearchInput" placeholder="Search QAPs, PO numbers, or navigation actions..." style="width: 100%; background: none; border: none; font-size: 15px; color: #ffffff; outline: none; font-weight: 500;" autocomplete="off" />
+                <span style="font-family: monospace; font-size: 10px; color: #5f7596; background-color: rgba(5,8,14,0.6); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); user-select: none;">ESC</span>
+            </div>
+            <div id="cmdResultsList" class="cmd-results" style="max-height: 350px; overflow-y: auto; padding: 12px 0;">
+                <!-- Results will be loaded dynamically via Javascript -->
+            </div>
+        </div>
+    </div>
+
     <script>
         function dismissToast() {
             const toast = document.getElementById('welcomeToast');
@@ -189,19 +265,143 @@ else
                 setTimeout(() => toast.remove(), 400);
             }
         }
-        document.addEventListener('DOMContentLoaded', () => {
-            // Dismiss Preloader
-            const preloader = document.getElementById('appPreloader');
-            if (preloader) {
-                preloader.style.opacity = '0';
-                preloader.style.visibility = 'hidden';
-                setTimeout(() => preloader.remove(), 500);
-            }
 
+        // Toggle Notifications Menu
+        function toggleNotificationsMenu() {
+            const dropdown = document.getElementById('notificationsDropdown');
+            if (dropdown) {
+                const isHidden = dropdown.style.display === 'none';
+                dropdown.style.display = isHidden ? 'block' : 'none';
+                if (isHidden) {
+                    // Close command palette if open
+                    document.getElementById('cmdPaletteModal').style.display = 'none';
+                }
+            }
+        }
+
+        // Command Palette actions list
+        const cmdActions = [
+            { name: "Go to Dashboard", desc: "Navigate to home dashboard", url: "/Home/Dashboard", icon: "📊" },
+            { name: "Create New QAP", desc: "Start a new Quality Assurance Plan wizard", url: "/Qap/Create", icon: "➕" },
+            { name: "View My QAPs", desc: "List of your generated QAPs and status", url: "/Qap/MyQaps", icon: "📁" },
+            { name: "Review Pending QAPs", desc: "Admin review queue for QAP approvals", url: "/QapApproval/Index", icon: "✅" },
+            { name: "Helpdesk Support", desc: "Contact system administrator", url: "#support", icon: "📞" },
+            { name: "Toggle Theme", desc: "Switch between dark and light modes", action: "toggleTheme", icon: "🌗" },
+            { name: "Logout", desc: "Log out of current portal session", action: "logout", icon: "🚪" }
+        ];
+
+        // Open Command Palette
+        function openCommandPalette() {
+            const modal = document.getElementById('cmdPaletteModal');
+            const input = document.getElementById('cmdSearchInput');
+            if (modal && input) {
+                modal.style.display = 'flex';
+                input.value = '';
+                // Close notifications menu if open
+                document.getElementById('notificationsDropdown').style.display = 'none';
+                renderCommandResults("");
+                setTimeout(() => input.focus(), 50);
+            }
+        }
+
+        // Close Command Palette
+        function closeCommandPalette(event) {
+            const modal = document.getElementById('cmdPaletteModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Render Command Results
+        function renderCommandResults(query) {
+            const list = document.getElementById('cmdResultsList');
+            if (!list) return;
+            
+            const filtered = cmdActions.filter(act => 
+                act.name.toLowerCase().includes(query.toLowerCase()) || 
+                act.desc.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `<div style="padding: 20px 24px; text-align: center; color: #5f7596; font-size: 13.5px;">No actions or pages match your query.</div>`;
+                return;
+            }
+            
+            list.innerHTML = filtered.map((act, index) => `
+                <div class="cmd-result-item" onclick="executeCommand(${index})" style="display: flex; align-items: center; gap: 16px; padding: 12px 24px; cursor: pointer; transition: all 0.2s ease;">
+                    <span style="font-size: 18px; width: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${act.icon}</span>
+                    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+                        <span style="font-size: 13.5px; font-weight: 700; color: #ffffff;">${act.name}</span>
+                        <span style="font-size: 11px; color: #5f7596;">${act.desc}</span>
+                    </div>
+                    <span style="font-size: 11px; color: #3b82f6; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Select</span>
+                </div>
+            `).join('');
+            
+            // Add hover effects via JS dynamically for robustness
+            const items = list.querySelectorAll('.cmd-result-item');
+            items.forEach(it => {
+                it.addEventListener('mouseenter', () => {
+                    it.style.backgroundColor = 'rgba(59, 130, 246, 0.08)';
+                    it.style.borderLeft = '4px solid #3b82f6';
+                    it.style.paddingLeft = '20px';
+                });
+                it.addEventListener('mouseleave', () => {
+                    it.style.backgroundColor = 'transparent';
+                    it.style.borderLeft = 'none';
+                    it.style.paddingLeft = '24px';
+                });
+            });
+        }
+
+        // Execute Command Action
+        function executeCommand(index) {
+            const act = cmdActions[index];
+            if (!act) return;
+            
+            closeCommandPalette();
+            
+            if (act.url) {
+                window.location.href = act.url;
+            } else if (act.action === "toggleTheme") {
+                const toggleBtn = document.getElementById('themeToggleBtn');
+                if (toggleBtn) toggleBtn.click();
+            } else if (act.action === "logout") {
+                const logoutForm = document.querySelector('form[action$="Logout"]');
+                if (logoutForm) logoutForm.submit();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Dismiss welcome toast
             const toast = document.getElementById('welcomeToast');
             if (toast) {
                 setTimeout(dismissToast, 6000);
             }
+
+            // Bind inputs and hotkeys
+            const input = document.getElementById('cmdSearchInput');
+            if (input) {
+                input.addEventListener('input', (e) => renderCommandResults(e.target.value));
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const firstItem = document.querySelector('#cmdResultsList .cmd-result-item');
+                        if (firstItem) firstItem.click();
+                    }
+                });
+            }
+
+            // Global Ctrl+K hotkey
+            window.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                    e.preventDefault();
+                    openCommandPalette();
+                }
+                if (e.key === 'Escape') {
+                    closeCommandPalette();
+                    document.getElementById('notificationsDropdown').style.display = 'none';
+                }
+            });
 
             const toggleBtn = document.getElementById('themeToggleBtn');
             if (toggleBtn) {
@@ -212,6 +412,92 @@ else
                 });
             }
         });
+    </script>
+
+    <!-- Real-time Alert Toast Container -->
+    <div id="liveAlertToast" class="live-alert-toast" style="display: none; position: fixed; top: 24px; right: 24px; width: 340px; background-color: #05080e; border: 1.5px solid #ef4444; border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.2); z-index: 100005; padding: 16px; overflow: hidden;">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background-color: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; flex-shrink: 0;">!</div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                <span id="liveAlertTitle" style="font-size: 12px; font-weight: 800; color: #ef4444; letter-spacing: 0.5px; text-transform: uppercase;">System Warning</span>
+                <span id="liveAlertMsg" style="font-size: 11px; color: #e2e8f0; line-height: 1.4;"></span>
+                <span id="liveAlertTime" style="font-size: 8.5px; color: #5f7596; font-family: monospace;"></span>
+            </div>
+            <button onclick="closeLiveAlert()" style="background: none; border: none; color: #5f7596; font-size: 18px; cursor: pointer; line-height: 1; padding: 0; margin-left: 8px;">&times;</button>
+        </div>
+    </div>
+
+    <!-- SignalR Client Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+
+    <script>
+        // Connect to SignalR NotificationHub
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveNotification", function (title, message, timestamp) {
+            console.log("Announcement received:", title, message, timestamp);
+            
+            // 1. Increment sidebar notifications count
+            const badge = document.querySelector('#sidebarNotificationsBtn .capsule-badge');
+            if (badge) {
+                const current = parseInt(badge.textContent) || 0;
+                badge.textContent = current + 1;
+            }
+
+            // 2. Prepend message item inside dropdown menu
+            const dropdownList = document.querySelector('#notificationsDropdown div:nth-child(2)');
+            if (dropdownList) {
+                const newItem = document.createElement('div');
+                newItem.className = 'notification-item';
+                newItem.style.padding = '12px 16px';
+                newItem.style.borderBottom = '1px solid rgba(255, 255, 255, 0.02)';
+                newItem.style.display = 'flex';
+                newItem.style.flexDirection = 'column';
+                newItem.style.gap = '4px';
+                newItem.innerHTML = `
+                    <div style="font-size: 11.5px; font-weight: 700; color: #ff5e5e;">ALERT: ${title}</div>
+                    <div style="font-size: 10px; color: #e2e8f0; line-height: 1.4;">${message}</div>
+                    <div style="font-size: 9px; color: #5f7596;">Broadcast by Admin &middot; Just now</div>
+                `;
+                dropdownList.insertBefore(newItem, dropdownList.firstChild);
+            }
+
+            // 3. Slide in real-time alert toast
+            const toast = document.getElementById('liveAlertToast');
+            const tTitle = document.getElementById('liveAlertTitle');
+            const tMsg = document.getElementById('liveAlertMsg');
+            const tTime = document.getElementById('liveAlertTime');
+            if (toast && tTitle && tMsg && tTime) {
+                tTitle.textContent = title;
+                tMsg.textContent = message;
+                tTime.textContent = timestamp;
+                
+                toast.style.display = 'block';
+                toast.style.animation = 'alertSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                
+                // Auto close after 10 seconds
+                setTimeout(closeLiveAlert, 10000);
+            }
+        });
+
+        connection.start().then(function () {
+            console.log("SignalR Connected to NotificationHub");
+        }).catch(function (err) {
+            console.error("SignalR Connection Error: ", err.toString());
+        });
+
+        function closeLiveAlert() {
+            const toast = document.getElementById('liveAlertToast');
+            if (toast && toast.style.display !== 'none') {
+                toast.style.animation = 'alertSlideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
+            }
+        }
     </script>
 
 @await RenderSectionAsync("Scripts", required: false)

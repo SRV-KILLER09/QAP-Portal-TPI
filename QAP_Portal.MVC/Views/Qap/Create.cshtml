@@ -25,7 +25,10 @@
             <input type="text" id="poNumberSearch" placeholder="e.g. 4500001234" value="@Model.PoNumber" />
             <button type="button" id="searchPoBtn" class="btn btn-secondary">Search</button>
         </div>
-        <div id="poSearchMessage" class="field-error"></div>
+        <div style="font-size:11.5px;color:#5f7596;margin-top:8px;">
+            Tip: Use the seeded test purchase order <strong style="color: #60a5fa; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('poNumberSearch').value = 'PO26TEST01'; document.getElementById('searchPoBtn').click();">PO26TEST01</strong> to proceed.
+        </div>
+        <div id="poSearchMessage" class="field-error" style="margin-top: 8px;"></div>
 
         <div id="poResult" style="display:none;margin-top:20px;">
             <div class="detail-grid">
