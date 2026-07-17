@@ -168,11 +168,83 @@ Every transition writes a row to `GROUP_ACTION_LOG` with the acting user, timest
 
 ---
 
-<img width="949" height="475" alt="image" src="https://github.com/user-attachments/assets/506af4f7-203f-40ba-9030-38f5a38114b5" />
+<img width="948" height="477" alt="image" src="https://github.com/user-attachments/assets/ead0c6f5-44e4-447d-829f-05a677976de6" />
 
 ---
 
-<img width="945" height="468" alt="image" src="https://github.com/user-attachments/assets/06b47c3b-d2f2-49ce-99fa-9d3a569ac18f" />
+<img width="949" height="483" alt="image" src="https://github.com/user-attachments/assets/bb343b15-7672-4e10-9c93-cd3a9a8d84c8" />
+
+---
+
+<img width="950" height="491" alt="image" src="https://github.com/user-attachments/assets/a102cd19-44bc-4ccd-9d82-cd3c94fa20e3" />
+
+---
+
+<img width="1600" height="828" alt="image" src="https://github.com/user-attachments/assets/277ae13b-55da-47c0-af2c-8fd5d66d0d22" />
+
+---
+
+<img width="1600" height="832" alt="image" src="https://github.com/user-attachments/assets/dcd6a57e-5d10-41fc-a171-313297bd137f" />
+
+---
+
+<img width="949" height="488" alt="image" src="https://github.com/user-attachments/assets/ef98f825-aab7-4301-ab52-c8ae0d8af805" />
+
+---
+
+<img width="948" height="453" alt="image" src="https://github.com/user-attachments/assets/0df23877-a2c5-4bf1-b19f-1c38a6a54bd5" />
+
+---
+
+<img width="802" height="238" alt="image" src="https://github.com/user-attachments/assets/8e084f9a-aace-4e01-a297-381df3c437e8" />
+
+---
+
+<img width="951" height="494" alt="image" src="https://github.com/user-attachments/assets/56e550f6-db0f-4d58-a9fa-91bebec377ef" />
+
+---
+
+<img width="955" height="497" alt="image" src="https://github.com/user-attachments/assets/d999f878-d54b-4157-9d99-e131321193dd" />
+
+---
+
+<img width="949" height="481" alt="image" src="https://github.com/user-attachments/assets/de25042b-5a95-481f-a344-1487c7b22cf7" />
+
+---
+
+<img width="954" height="489" alt="image" src="https://github.com/user-attachments/assets/29aa0db6-04c8-40c4-9d42-194bd88bd03a" />
+
+---
+
+<img width="950" height="431" alt="image" src="https://github.com/user-attachments/assets/3b6e0833-a5b0-4565-8454-6019c26fe76b" />
+
+---
+
+<img width="948" height="359" alt="image" src="https://github.com/user-attachments/assets/0a32fbfd-46d5-4ded-8d46-6746c60b22da" />
+
+---
+
+<img width="950" height="485" alt="image" src="https://github.com/user-attachments/assets/8fa20be9-a003-418f-8934-fae5ea4097c2" />
+
+---
+
+<img width="950" height="482" alt="image" src="https://github.com/user-attachments/assets/a6758a01-af37-4187-82b8-c41c66111b28" />
+
+---
+
+<img width="950" height="485" alt="image" src="https://github.com/user-attachments/assets/f0672325-bb80-45cd-9cd2-8183a6886a32" />
+
+---
+
+<img width="952" height="383" alt="image" src="https://github.com/user-attachments/assets/bd76f054-c4d3-46c6-9b0f-e8c8125fb22a" />
+
+---
+
+<img width="959" height="323" alt="image" src="https://github.com/user-attachments/assets/ca4413fe-88f2-4f1a-a0e0-6d790887951c" />
+
+---
+
+<img width="948" height="487" alt="image" src="https://github.com/user-attachments/assets/5ee2c971-4eaa-4d34-a4d5-276b63d904d4" />
 
 ---
 
