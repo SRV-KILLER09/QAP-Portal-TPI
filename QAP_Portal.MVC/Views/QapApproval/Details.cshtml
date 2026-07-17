@@ -17,9 +17,15 @@
             </div>
             <h1 class="page-title" style="margin-bottom: 8px;">@Model.QapNumber</h1>
             <span class="pill pill-@Model.Status.ToString().ToLower()">@Model.Status</span>
+            @if (!string.IsNullOrEmpty(Model.AssignedAdmin))
+            {
+                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-left: 12px;">
+                    Assigned Reviewer: <strong style="color: var(--text-main);">@Model.AssignedAdmin</strong>
+                </span>
+            }
         </div>
         
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
             @if (Model.Status == QapStatus.Submitted)
             {
                 <form asp-action="Approve" asp-route-id="@Model.GroupId" method="post" style="display:inline;">
@@ -29,6 +35,12 @@
                 </form>
                 <button type="button" class="btn btn-danger" id="rejectBtn">✕ Reject</button>
             }
+
+            <form asp-action="DeleteQap" asp-route-id="@Model.GroupId" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this QAP? This will delete all line group items and logs.');">
+                <button type="submit" class="btn btn-danger" style="background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; border: 1px solid;">
+                    ✕ Delete QAP
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -112,7 +124,7 @@
             }
             @if (!Model.HasTechSpec && !Model.HasPoCopy)
             {
-                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: var(--bg-main); border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
                     No PO level documents uploaded
                 </div>
             }
@@ -144,7 +156,7 @@
             }
             @if (!Model.HasQapDocument && !Model.HasDrawing)
             {
-                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: var(--bg-main); border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
                     No group documents uploaded
                 </div>
             }

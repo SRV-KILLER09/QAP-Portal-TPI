@@ -45,6 +45,7 @@ namespace QAP_Portal.MVC.Models.Api
         public string? Status { get; set; }   // "D" | "S" | "A" | "R"
         public byte[]? QapDocument { get; set; }
         public byte[]? DrawingDocument { get; set; }
+        public string? AssignedAdmin { get; set; }
     }
 
     public class QapGroupItemDto
@@ -82,6 +83,7 @@ namespace QAP_Portal.MVC.Models.Api
     {
         public string Po { get; set; } = string.Empty;
         public string? InitiatorEmail { get; set; }
+        public string? AssignedAdmin { get; set; }
         public List<QapGroupRequestDto> Groups { get; set; } = new();
     }
 

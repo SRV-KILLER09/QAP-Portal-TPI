@@ -128,5 +128,21 @@ namespace QAP.Portal.API.Controllers
 
             return Ok(new { message = $"Password hash updated for {req.Email}." });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            var admins = await _context.AdminUsers
+                .Where(x => x.STATUS == "A")
+                .Select(x => new
+                {
+                    adminId = x.ADMIN_ID,
+                    adminName = x.ADMIN_NAME,
+                    email = x.EMAIL
+                })
+                .ToListAsync();
+
+            return Ok(admins);
+        }
     }
 }

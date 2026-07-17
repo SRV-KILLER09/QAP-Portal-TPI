@@ -80,6 +80,8 @@ namespace QAP_Portal.MVC.Services
 
         // New endpoints for real-time creation and delete support
         Task<bool> DeleteQapGroupAsync(int groupId);
-        Task<bool> CreatePurchaseOrderAsync(CreatePoViewModel model);
+        Task<(bool Success, string ErrorMessage)> CreatePurchaseOrderAsync(CreatePoViewModel model);
+        Task<List<AdminUserViewModel>> GetAdminsAsync();
+        Task<bool> CreateQapUserAsync(string email, string displayName, string role, string password);
     }
 }

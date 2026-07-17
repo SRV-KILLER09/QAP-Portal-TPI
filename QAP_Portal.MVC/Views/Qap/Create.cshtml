@@ -21,12 +21,13 @@
         <h3>Step 1 &middot; Select Purchase Order</h3>
         <p style="font-size:13px;color:#6b6b6f;">Choose the PO against which you want to create a QAP.</p>
         <label class="form-label">PO Number</label>
-        <div style="display:flex;gap:10px;max-width:400px;">
-            <input type="text" id="poNumberSearch" placeholder="e.g. 4500001234" value="@Model.PoNumber" />
+        <div style="display:flex;gap:10px;max-width:550px;align-items:center;">
+            <input type="text" id="poNumberSearch" placeholder="e.g. 4500001234" value="@Model.PoNumber" style="flex: 1;" />
             <button type="button" id="searchPoBtn" class="btn btn-secondary">Search</button>
+            <a asp-action="CreatePo" class="btn btn-secondary" style="background-color: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa; white-space: nowrap; display: inline-flex; align-items: center; text-decoration: none;">+ Create PO</a>
         </div>
         <div style="font-size:11.5px;color:#5f7596;margin-top:8px;">
-            Tip: Use the seeded test purchase order <strong style="color: #60a5fa; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('poNumberSearch').value = 'PO26TEST01'; document.getElementById('searchPoBtn').click();">PO26TEST01</strong> to proceed.
+            Tip: Use <strong style="color: #60a5fa; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('poNumberSearch').value = 'PO26TEST01'; document.getElementById('searchPoBtn').click();">PO26TEST01</strong> or <a asp-action="CreatePo" style="color: #10b981; font-weight: 700; text-decoration: underline;">create your own PO number</a>.
         </div>
         <div id="poSearchMessage" class="field-error" style="margin-top: 8px;"></div>
 
@@ -111,7 +112,15 @@
             <div class="label" style="margin-bottom:6px;">Uploaded Files</div>
             <ul id="reviewFiles" style="font-size:13px;"></ul>
             <div class="label" style="margin-bottom:6px;">Remarks</div>
-            <div id="reviewRemarks" style="font-size:13px;color:#6b6b6f;">&mdash;</div>
+            <div id="reviewRemarks" style="font-size:13px;color:#6b6b6f;margin-bottom:16px;">&mdash;</div>
+            
+            <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
+                <label asp-for="AssignedAdmin" class="label" style="font-size: 11.5px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Select Reviewing Admin (TPI / Inspection Department) *</label>
+                <select asp-for="AssignedAdmin" class="form-control" required id="assignedAdminDropdown" style="background-color: var(--bg-main); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 10px; color: var(--text-main); font-weight: 600; width: 100%; max-width: 450px;">
+                    <option value="">-- Load Reviewers --</option>
+                </select>
+                <span asp-validation-for="AssignedAdmin" style="color: #ef4444; font-size: 12px; font-weight: 600; margin-top: 4px; display: block;"></span>
+            </div>
         </div>
 
         <div class="btn-row split">
@@ -291,6 +300,40 @@
         const li = document.createElement('li');
         li.textContent = text;
         list.appendChild(li);
+    }
+
+    async function loadAdmins() {
+        const dropdown = document.getElementById('assignedAdminDropdown');
+        if (!dropdown) return;
+
+        try {
+            const res = await fetch('/Qap/GetAdmins');
+            if (res.ok) {
+                const admins = await res.json();
+                dropdown.innerHTML = '<option value="">-- Choose Reviewer Admin --</option>';
+                admins.forEach(adm => {
+                    const opt = document.createElement('option');
+                    opt.value = adm.email;
+                    opt.textContent = `${adm.adminName} (ID: ${adm.adminId} | ${adm.email})`;
+                    dropdown.appendChild(opt);
+                });
+            } else {
+                dropdown.innerHTML = '<option value="">Failed to load reviewers</option>';
+            }
+        } catch (e) {
+            console.error('Error loading admins:', e);
+            dropdown.innerHTML = '<option value="">Failed to load reviewers</option>';
+        }
+    }
+
+    loadAdmins();
+
+    // Auto-trigger search if PO number is already pre-filled (e.g. redirected from CreatePo)
+    const initialPo = document.getElementById('poNumberSearch').value.trim();
+    if (initialPo) {
+        setTimeout(() => {
+            document.getElementById('searchPoBtn').click();
+        }, 100);
     }
 </script>
 }

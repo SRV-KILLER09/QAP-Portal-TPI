@@ -17,6 +17,12 @@
             </div>
             <h1 class="page-title" style="margin-bottom: 8px;">@Model.QapNumber</h1>
             <span class="pill pill-@Model.Status.ToString().ToLower()">@Model.Status</span>
+            @if (!string.IsNullOrEmpty(Model.AssignedAdmin))
+            {
+                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-left: 12px;">
+                    Assigned Reviewer: <strong style="color: var(--text-main);">@Model.AssignedAdmin</strong>
+                </span>
+            }
         </div>
         
         <div style="display: flex; gap: 8px;">
@@ -115,7 +121,7 @@
             }
             @if (!Model.HasTechSpec && !Model.HasPoCopy)
             {
-                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: var(--bg-main); border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
                     No PO level documents uploaded
                 </div>
             }
@@ -147,7 +153,7 @@
             }
             @if (!Model.HasQapDocument && !Model.HasDrawing)
             {
-                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
+                <div style="font-size: 13px; color: var(--text-muted); padding: 8px 12px; background: var(--bg-main); border-radius: var(--radius-sm); border: 1px dashed var(--border); width: 100%;">
                     No group documents uploaded
                 </div>
             }

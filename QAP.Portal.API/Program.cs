@@ -38,8 +38,14 @@ using (var scope = app.Services.CreateScope())
                         QAP_DOCUMENT BLOB,
                         DRAWING_DOCUMENT BLOB,
                         QAP_NUMBER VARCHAR2(20),
-                        STATUS VARCHAR2(1)
+                        STATUS VARCHAR2(1),
+                        ASSIGNED_ADMIN VARCHAR2(100)
                     )';
+                ELSE
+                    SELECT COUNT(*) INTO c FROM USER_TAB_COLS WHERE TABLE_NAME = 'QAP_LINE_GROUPS' AND COLUMN_NAME = 'ASSIGNED_ADMIN';
+                    IF c = 0 THEN
+                        EXECUTE IMMEDIATE 'ALTER TABLE QAP_LINE_GROUPS ADD ASSIGNED_ADMIN VARCHAR2(100)';
+                    END IF;
                 END IF;
             END;";
         command.ExecuteNonQuery();

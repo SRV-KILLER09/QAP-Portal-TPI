@@ -24,6 +24,10 @@ namespace QAP.Portal.API.Models
         [MaxLength(1)]
         public string? Status { get; set; }
 
+        [Column("ASSIGNED_ADMIN")]
+        [MaxLength(100)]
+        public string? AssignedAdmin { get; set; }
+
         public ICollection<QapGroupItem>? GroupItems { get; set; }
         public ICollection<GroupActionLog>? ActionLogs { get; set; }
     }

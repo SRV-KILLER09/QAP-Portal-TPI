@@ -64,6 +64,7 @@ namespace QAP_Portal.MVC.Services
             {
                 Po = model.PoNumber ?? string.Empty,
                 InitiatorEmail = initiatorEmail,
+                AssignedAdmin = model.AssignedAdmin,
                 Groups = model.Groups.Select(g => new QapGroupRequestDto
                 {
                     LineItems = g.LineItems.Select(li => new LineItemRequestDto { Line = li.Line, ItemNo = li.ItemNo }).ToList()
@@ -170,7 +171,8 @@ namespace QAP_Portal.MVC.Services
                     InitiatedOn = initiatedLog?.ActionOn,
                     LastActionBy = lastLog?.ActionBy,
                     LastActionOn = lastLog?.ActionOn,
-                    LastRemarks = lastLog?.Remarks
+                    LastRemarks = lastLog?.Remarks,
+                    AssignedAdmin = g.AssignedAdmin
                 });
             }
 
@@ -209,6 +211,7 @@ namespace QAP_Portal.MVC.Services
                     LastRemarks = lastLog?.Remarks,
                     HasQapDocument = group.QapDocument is { Length: > 0 },
                     HasDrawing = group.DrawingDocument is { Length: > 0 },
+                    AssignedAdmin = group.AssignedAdmin,
                     ActionLogs = groupLogs
                 };
 
@@ -406,6 +409,95 @@ public async Task<byte[]?> GetPoCopyBytesAsync(string poNumber)
             }
         }
 
+        public async Task<bool> DeleteQapGroupAsync(int groupId)
+        {
+            try
+            {
+                var response = await _http.DeleteAsync($"QapLineGroups/{groupId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting QAP group {GroupId}", groupId);
+                return false;
+            }
+        }
+
+        public async Task<(bool Success, string ErrorMessage)> CreatePurchaseOrderAsync(CreatePoViewModel model)
+        {
+            try
+            {
+                var dto = new
+                {
+                    PoNumber = model.PoNumber,
+                    PoDescription = model.PoDescription,
+                    VendorCode = model.VendorCode,
+                    PoDate = model.PoDate,
+                    PoValue = model.PoValue,
+                    PlantCode = model.PlantCode,
+                    ContactPerson = model.ContactPerson,
+                    Email = model.Email,
+                    MobileNo = model.MobileNo,
+                    LineItems = model.LineItems.Select(x => new
+                    {
+                        Item = x.Item,
+                        Line = x.Line,
+                        LineDescription = x.LineDescription,
+                        QtyOrdered = x.QtyOrdered,
+                        Uom = x.Uom,
+                        UnitPrice = x.UnitPrice
+                    }).ToList()
+                };
+
+                var response = await _http.PostAsJsonAsync("PurchaseOrders", dto, JsonOpts);
+                if (response.IsSuccessStatusCode)
+                {
+                    return (true, string.Empty);
+                }
+
+                // Try to parse detailed error message
+                string detailsMsg;
+                try
+                {
+                    var errorPayload = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>(JsonOpts);
+                    detailsMsg = errorPayload != null && errorPayload.TryGetValue("error", out var msg) 
+                        ? msg 
+                        : $"API returned {(int)response.StatusCode} {response.ReasonPhrase}";
+                }
+                catch
+                {
+                    detailsMsg = await response.Content.ReadAsStringAsync();
+                    if (string.IsNullOrWhiteSpace(detailsMsg))
+                        detailsMsg = $"API returned {(int)response.StatusCode} {response.ReasonPhrase}";
+                }
+
+                return (false, detailsMsg);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating Purchase Order {PoNumber}", model.PoNumber);
+                return (false, ex.Message);
+            }
+        }
+        public async Task<List<AdminUserViewModel>> GetAdminsAsync()
+        {
+            return await GetJsonListAsync<AdminUserViewModel>("admin");
+        }
+
+        public async Task<bool> CreateQapUserAsync(string email, string displayName, string role, string password)
+        {
+            try
+            {
+                var body = new { Email = email, DisplayName = displayName, Role = role, Password = password };
+                var response = await _http.PostAsJsonAsync("user/create", body, JsonOpts);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating user {Email}", email);
+                return false;
+            }
+        }
 
 private async Task<List<T>> GetJsonListAsync<T>(string relativeUrl)
 {

@@ -69,5 +69,28 @@ namespace QAP_Portal.MVC.Controllers
                 : "Could not reject the QAP. Only a Submitted QAP can be rejected.";
             return RedirectToAction(nameof(Details), new { id = model.GroupId });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteQap(int id)
+        {
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "Admin")
+            {
+                TempData["Error"] = "Only administrators can delete QAPs.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var ok = await _api.DeleteQapGroupAsync(id);
+            if (ok)
+            {
+                TempData["Success"] = "QAP was successfully deleted.";
+            }
+            else
+            {
+                TempData["Error"] = "Could not delete the QAP.";
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

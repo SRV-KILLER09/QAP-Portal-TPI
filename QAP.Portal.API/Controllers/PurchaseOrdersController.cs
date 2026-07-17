@@ -107,7 +107,7 @@ namespace QAP.Portal.API.Controllers
             var cleanPoNumber = req.PoNumber.Trim().ToUpper();
 
             // Check if PO already exists
-            var exists = await _context.SapPoMasters.AnyAsync(x => x.PoNumber == cleanPoNumber);
+            var exists = await _context.SapPoMasters.FindAsync(cleanPoNumber) != null;
             if (exists)
                 return Conflict(new { error = $"Purchase Order '{cleanPoNumber}' already exists." });
 
@@ -146,7 +146,19 @@ namespace QAP.Portal.API.Controllers
                 _context.MbaPoDetails.Add(details);
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                var innerEx = dbEx.InnerException ?? dbEx;
+                return BadRequest(new { error = $"Database constraint failure: {innerEx.Message}" });
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { error = $"An error occurred: {ex.Message}" });
+            }
 
             return CreatedAtAction(nameof(GetPoWithLineItems), new { po = cleanPoNumber }, new { message = "Purchase Order created successfully.", po = cleanPoNumber });
         }

@@ -21,7 +21,7 @@
 
     <div style="position: relative; z-index: 2;">
         <span style="font-size: 11px; font-weight: 800; color: #3b82f6; letter-spacing: 1.5px; text-transform: uppercase;">Dashboard</span>
-        <h1 style="font-size: 32px; font-weight: 800; color: var(--text-white); margin: 8px 0 12px 0;">@greeting, <span class="username-gradient">@displayName</span></h1>
+        <h1 style="font-size: 32px; font-weight: 800; color: var(--text-main); margin: 8px 0 12px 0;">@greeting, <span class="username-gradient">@displayName</span></h1>
         <p style="font-size: 14.5px; color: var(--text-muted); margin-bottom: 24px; max-width: 600px; line-height: 1.5;">
             @(isAdmin ? "Here's what's happening across the GAIL Inspection Management system right now." : "Here's an overview of your active Quality Assurance Plans (QAP) and inspection workflows.")
         </p>
@@ -93,7 +93,7 @@
 </div>
 
 <div class="card animate-fade-in" style="animation-delay: 0.1s;">
-    <div class="label" style="margin-bottom:16px; font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-white);">Recent QAPs</div>
+    <div class="label" style="margin-bottom:16px; font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-main);">Recent QAPs</div>
     <table class="qap-table">
         <thead>
             <tr><th>QAP Number</th><th>PO Number</th><th>Date</th><th>Status</th><th></th></tr>
@@ -106,12 +106,18 @@
         @foreach (var qap in Model.RecentQaps)
         {
             <tr>
-                <td style="font-weight: 700; color: var(--text-white);">@qap.QapNumber</td>
+                <td style="font-weight: 700; color: var(--text-main);">@qap.QapNumber</td>
                 <td style="font-weight: 700; color: var(--text-muted);">@qap.PoNumber</td>
                 <td>@(qap.InitiatedOn?.ToString("M/d/yyyy") ?? "-")</td>
                 <td><span class="pill pill-@qap.Status.ToString().ToLower()">@qap.Status</span></td>
                 <td>
                     <a asp-controller="@(isAdmin ? "QapApproval" : "Qap")" asp-action="Details" asp-route-id="@qap.GroupId" style="color: #60a5fa; text-decoration: none; font-weight: 700;">View &gt;</a>
+                    @if (isAdmin)
+                    {
+                        <form asp-controller="QapApproval" asp-action="DeleteQap" asp-route-id="@qap.GroupId" method="post" style="display:inline; margin-left:14px;" onsubmit="return confirm('Are you sure you want to delete this QAP? This will delete all line group items and logs.');">
+                            <button type="submit" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:700; padding:0; font-size:13px; font-family:inherit;">Delete</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }
@@ -121,7 +127,7 @@
 
 <style>
     .username-gradient {
-        background: linear-gradient(135deg, #ffffff 30%, #60a5fa 100%);
+        background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         display: inline-block;

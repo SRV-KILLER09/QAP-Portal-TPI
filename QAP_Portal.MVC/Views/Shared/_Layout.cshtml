@@ -53,6 +53,7 @@ else
         }
     </script>
     <div class="app-shell">
+        <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
         <aside class="sidebar">
             <div class="brand" style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
                 <div class="brand-logo-holder" style="width: 46px; height: 46px; border-radius: 50%; background-color: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);">
@@ -160,19 +161,61 @@ else
 
         <div class="main">
             <header class="topbar">
-                <div></div>
-                <div class="user-chip">
-                    <div>
-                        <div class="user-name">@(isAdmin ? "Inspection Admin" : "Mechanical Initiator")</div>
-                        <div class="user-role">@email &middot; @role</div>
-                    </div>
+                <button id="mobileMenuToggle" class="mobile-menu-toggle-btn" onclick="toggleMobileSidebar()" aria-label="Toggle Menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                
+                <div class="user-profile-container" style="position: relative; margin-left: auto; display: flex; align-items: center; gap: 12px; z-index: 100001;">
                     <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
                         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     </button>
-                    <form asp-controller="Home" asp-action="Logout" method="post">
-                        <button type="submit" class="btn btn-secondary">Logout</button>
-                    </form>
+
+                    <div class="profile-trigger" onclick="toggleProfileDropdown(event)" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 12px; border: 1px solid var(--border); border-radius: 30px; background-color: var(--bg-card); transition: all 0.2s ease; user-select: none;">
+                        <div class="avatar-circle" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 15px; box-shadow: 0 4px 10px rgba(24, 90, 219, 0.25);">
+                            @(string.IsNullOrEmpty(displayName) ? "U" : displayName[0].ToString().ToUpper())
+                        </div>
+                        <div class="profile-info-text" style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+                            <span class="profile-name-span" style="font-size: 13px; font-weight: 700; color: var(--text-main);">@displayName</span>
+                            <span class="profile-role-span" style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">@role</span>
+                        </div>
+                        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; color: var(--text-muted); margin-left: 2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+
+                    <!-- User Profile Dropdown Card -->
+                    <div id="profileDropdown" class="profile-dropdown-card" style="display: none; position: absolute; top: 52px; right: 0; width: 280px; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 1px var(--border); padding: 20px; overflow: hidden; animation: fadeIn 0.2s ease;">
+                        <div style="display: flex; align-items: center; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 14px;">
+                            <div class="avatar-large" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 20px;">
+                                @(string.IsNullOrEmpty(displayName) ? "U" : displayName[0].ToString().ToUpper())
+                            </div>
+                            <div style="display: flex; flex-direction: column; overflow: hidden;">
+                                <div style="font-size: 15px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@displayName</div>
+                                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 2px;">@role</div>
+                                <div style="font-size: 10px; color: var(--text-muted); word-break: break-all;">@email</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px;">
+                            <a href="/Home/Dashboard" class="profile-dropdown-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none; transition: background 0.15s ease;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--text-muted);"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                <span>Dashboard</span>
+                            </a>
+                            <a href="/Qap/MyQaps" class="profile-dropdown-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none; transition: background 0.15s ease;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--text-muted);"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                <span>My Quality Plans</span>
+                            </a>
+                            <a href="#support" onclick="closeProfileDropdown();" class="profile-dropdown-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none; transition: background 0.15s ease;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--text-muted);"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                <span>Helpdesk Support</span>
+                            </a>
+                        </div>
+
+                        <form asp-controller="Home" asp-action="Logout" method="post" style="width: 100%;">
+                            <button type="submit" class="btn btn-danger" style="width: 100%; justify-content: center; font-size: 12.5px; padding: 8px 16px;">
+                                Logout Session
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </header>
 
@@ -252,6 +295,84 @@ else
             </div>
             <div id="cmdResultsList" class="cmd-results" style="max-height: 350px; overflow-y: auto; padding: 12px 0;">
                 <!-- Results will be loaded dynamically via Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Helpdesk Support Modal -->
+    <div id="helpdeskModal" class="cmd-palette-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(3, 5, 8, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100002; justify-content: center; align-items: center; padding: 20px;" onclick="closeHelpdeskModal(event)">
+        <div class="helpdesk-box" style="width: 100%; max-width: 500px; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(24, 90, 219, 0.15);" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div style="padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(24, 90, 219, 0.1) 0%, rgba(255, 127, 39, 0.05) 100%);">
+                <div>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--secondary); letter-spacing: 1px; text-transform: uppercase;">GAIL IT Core Support</span>
+                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main); margin: 4px 0 0 0;">System Diagnostics &amp; Helpdesk</h3>
+                </div>
+                <button type="button" onclick="closeHelpdeskModal()" style="background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+            
+            <!-- Content -->
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Real-time Diagnostics -->
+                <div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Live Services Health</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: #10b981; margin: 0 auto 6px auto; display: block;"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>
+                            <div style="font-size: 10px; font-weight: 700; color: #10b981;">Oracle DB</div>
+                        </div>
+                        <div style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: #10b981; margin: 0 auto 6px auto; display: block;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            <div style="font-size: 10px; font-weight: 700; color: #10b981;">Portal API</div>
+                        </div>
+                        <div style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: #10b981; margin: 0 auto 6px auto; display: block;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            <div style="font-size: 10px; font-weight: 700; color: #10b981;">SignalR Hub</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Support Form -->
+                <form id="helpdeskForm" onsubmit="submitHelpdeskTicket(event)">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Issue Category</label>
+                        <select id="helpdeskCategory" class="form-control" required style="width:100%; background-color: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); padding: 8px 12px; border-radius: var(--radius-sm);">
+                            <option value="DB">Database Connection / Query Error</option>
+                            <option value="UPLOAD">File Upload Failed (QAP / Drawings)</option>
+                            <option value="AUTH">Account Authorization / Access</option>
+                            <option value="OTHER">General Bug / Interface Issue</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Urgency Level</label>
+                        <div style="display: flex; gap: 10px;">
+                            <label style="flex: 1; text-align: center; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--text-main); font-size: 12px; font-weight: 600;">
+                                <input type="radio" name="urgency" value="L" checked style="margin-right: 4px;" /> Low
+                            </label>
+                            <label style="flex: 1; text-align: center; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--text-main); font-size: 12px; font-weight: 600;">
+                                <input type="radio" name="urgency" value="M" style="margin-right: 4px;" /> Medium
+                            </label>
+                            <label style="flex: 1; text-align: center; padding: 8px; border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); border-radius: var(--radius-sm); cursor: pointer; color: #ef4444; font-size: 12px; font-weight: 700;">
+                                <input type="radio" name="urgency" value="H" style="margin-right: 4px;" /> Critical
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Describe the Issue</label>
+                        <textarea id="helpdeskMessage" placeholder="Provide details of the error or access issue..." required style="width:100%; height: 80px; background-color: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: var(--radius-sm); resize: none; font-size: 13px;"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 14px; font-weight: 700; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);">Submit Ticket</button>
+                </form>
+                
+                <div id="helpdeskSuccess" style="display: none; text-align: center; padding: 16px; background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-md); animation: fadeIn 0.3s ease;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; margin: 0 auto 10px auto; display: block; filter: drop-shadow(0 4px 8px rgba(16,185,129,0.3));"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div style="font-size: 14px; font-weight: 700; color: #10b981; margin-bottom: 4px;">Support Ticket Created!</div>
+                    <div style="font-size: 11.5px; color: var(--text-muted);" id="helpdeskTicketId">Ticket ID: GAIL-TKT-2026-0043</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">An IT engineer has been dispatched. Status: <strong>QUEUED</strong></div>
+                </div>
             </div>
         </div>
     </div>
@@ -498,6 +619,94 @@ else
                 }, 300);
             }
         }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.add('sidebar-open');
+                overlay.classList.add('active');
+            }
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.remove('sidebar-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        // Interactive User Profile Dropdown
+        function toggleProfileDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) {
+                const isHidden = dropdown.style.display === 'none';
+                dropdown.style.display = isHidden ? 'block' : 'none';
+            }
+        }
+
+        function closeProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown) {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        // Click outside handlers
+        document.addEventListener('click', function(e) {
+            closeProfileDropdown();
+            // Also close notifications dropdown if clicked outside
+            const notifDropdown = document.getElementById('notificationsDropdown');
+            const notifBtn = document.getElementById('sidebarNotificationsBtn');
+            if (notifDropdown && !notifDropdown.contains(e.target) && notifBtn && !notifBtn.contains(e.target)) {
+                notifDropdown.style.display = 'none';
+            }
+        });
+
+        // Interactive Helpdesk Modal
+        function openHelpdeskModal() {
+            const modal = document.getElementById('helpdeskModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.getElementById('helpdeskForm').style.display = 'block';
+                document.getElementById('helpdeskSuccess').style.display = 'none';
+                document.getElementById('helpdeskMessage').value = '';
+            }
+        }
+
+        function closeHelpdeskModal(e) {
+            if (e && e.target !== document.getElementById('helpdeskModal')) return;
+            const modal = document.getElementById('helpdeskModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function submitHelpdeskTicket(e) {
+            e.preventDefault();
+            const cat = document.getElementById('helpdeskCategory').value;
+            const msg = document.getElementById('helpdeskMessage').value;
+            
+            // Generate a random ticket ID
+            const tktId = `GAIL-TKT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            
+            document.getElementById('helpdeskTicketId').textContent = `Ticket ID: ${tktId}`;
+            document.getElementById('helpdeskForm').style.display = 'none';
+            document.getElementById('helpdeskSuccess').style.display = 'block';
+        }
+
+        // Bind all support triggers dynamically
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a[href="#support"]').forEach(a => {
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openHelpdeskModal();
+                });
+            });
+        });
     </script>
 
 @await RenderSectionAsync("Scripts", required: false)

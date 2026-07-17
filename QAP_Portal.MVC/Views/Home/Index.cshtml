@@ -34,6 +34,14 @@
             </div>
         }
 
+        @if (TempData["Success"] is string successMsg)
+        {
+            <div class="alert alert-success animate-fade-in" style="background-color: var(--success-bg); border: 1px solid var(--success-border); color: var(--success); padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>@successMsg</span>
+            </div>
+        }
+
         <!-- Unified Login Card -->
         <div class="login-card">
             <!-- Tabs -->
@@ -51,6 +59,15 @@
                     </svg>
                     <span>Inspection Admin</span>
                 </button>
+                <button type="button" class="login-tab" id="tab-register" onclick="switchTab('register')">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    <span>Create Account</span>
+                </button>
             </div>
 
             <!-- Initiator Login Form -->
@@ -67,7 +84,7 @@
                         <input type="text"
                                id="initiator-email"
                                name="email"
-                               placeholder="e.g. mansi@gail.co.in"
+                               placeholder="Enter Your Email ID"
                                required />
                     </div>
                     <span class="input-help">Enter your corporate email address to access QAP requests.</span>
@@ -94,7 +111,7 @@
                             </svg>
                         </button>
                     </div>
-                    <span class="input-help">Default seeded password is <strong>password123</strong>.</span>
+                    <span class="input-help">Enter your password.</span>
                 </div>
 
                 <button type="submit" class="btn-login btn-login-initiator">
@@ -120,7 +137,7 @@
                         <input type="text"
                                id="admin-email"
                                name="email"
-                               placeholder="e.g. admin@gail.in"
+                               placeholder="Enter Your Email ID"
                                required />
                     </div>
                 </div>
@@ -151,6 +168,70 @@
 
                 <button type="submit" class="btn-login btn-login-admin">
                     <span>Access Admin Portal</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="form-register" asp-controller="Home" asp-action="Register" method="post" class="login-form">
+                <input type="hidden" name="role" value="Initiator" />
+                
+                <div class="form-group">
+                    <label class="form-label-fancy" for="register-name">Full Name</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input type="text"
+                               id="register-name"
+                               name="displayName"
+                               placeholder="Enter Your Display Name"
+                               required />
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 18px;">
+                    <label class="form-label-fancy" for="register-email">Corporate Email Address</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <input type="email"
+                               id="register-email"
+                               name="email"
+                               placeholder="Enter Your Email ID"
+                               required />
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 18px;">
+                    <label class="form-label-fancy" for="register-password">Password</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <input type="password"
+                               id="register-password"
+                               name="password"
+                               placeholder="••••••••"
+                               required />
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('register-password', 'eye-icon-register')">
+                            <svg id="eye-icon-register" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login btn-login-initiator" style="margin-top: 24px;">
+                    <span>Create Initiator Account</span>
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>

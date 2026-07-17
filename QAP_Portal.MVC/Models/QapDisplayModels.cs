@@ -27,6 +27,7 @@ namespace QAP_Portal.MVC.Models
         public string? LastActionBy { get; set; }
         public DateTime? LastActionOn { get; set; }
         public string? LastRemarks { get; set; }
+        public string? AssignedAdmin { get; set; }
     }
 
     // Full detail page model - summary plus resolved documents/PO info/log history.
@@ -62,5 +63,12 @@ namespace QAP_Portal.MVC.Models
         public string? Description { get; set; }
         public decimal? QtyOrdered { get; set; }
         public string? Uom { get; set; }
+    }
+
+    public class AdminUserViewModel
+    {
+        public string AdminId { get; set; } = string.Empty;
+        public string AdminName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }

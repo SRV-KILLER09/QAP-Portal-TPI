@@ -1,0 +1,278 @@
+@model CreatePoViewModel
+@{
+    ViewData["Title"] = "Create Purchase Order";
+}
+
+<style>
+    /* Force dynamic and number inputs to be dark and aesthetic */
+    #createPoForm input, 
+    #createPoForm textarea, 
+    #createPoForm select,
+    #createPoForm .form-control {
+        background-color: rgba(10, 15, 24, 0.65) !important;
+        border: 1.5px solid var(--border) !important;
+        color: #ffffff !important;
+        border-radius: var(--radius-md) !important;
+        padding: 10px 14px !important;
+        transition: all 0.2s ease !important;
+        color-scheme: dark !important; /* Forces dark styling for pickers */
+    }
+
+    #createPoForm input:focus, 
+    #createPoForm textarea:focus, 
+    #createPoForm select:focus,
+    #createPoForm .form-control:focus {
+        outline: none !important;
+        border-color: #3b82f6 !important;
+        background-color: #0a0f18 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+    }
+
+    /* Table custom styles */
+    #lineItemsTable th {
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    #lineItemsTable td {
+        vertical-align: middle;
+        padding: 8px 4px;
+    }
+
+    #lineItemsTable input {
+        padding: 8px 10px !important;
+        font-size: 13.5px !important;
+    }
+
+    .delete-row-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+
+    .delete-row-btn:hover {
+        color: #ef4444;
+        background-color: rgba(239, 68, 68, 0.1);
+        transform: scale(1.15);
+    }
+</style>
+
+<div class="container animate-fade-in" style="max-width: 900px; margin-top: 30px; margin-bottom: 60px;">
+    <!-- Brand Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+        <div>
+            <span style="font-size: 11px; font-weight: 800; color: #3b82f6; letter-spacing: 1.5px; text-transform: uppercase;">Realtime Database Storage</span>
+            <h1 style="font-size: 28px; font-weight: 800; color: var(--text-main); margin: 6px 0 0 0;">Create Purchase Order</h1>
+        </div>
+        <a asp-action="Create" class="btn btn-secondary" style="font-size: 12.5px;">&larr; Back to Wizard</a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 14px 20px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 24px; font-weight: 600;">
+            @TempData["Error"]
+        </div>
+    }
+
+    <form asp-action="CreatePo" method="post" id="createPoForm">
+        <!-- Section 1: Header Details -->
+        <div class="card" style="margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+            <div style="font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #3b82f6; margin-bottom: 20px;">PO Header Details</div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
+                <div class="form-group">
+                    <label asp-for="PoNumber" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="PoNumber" class="form-control" placeholder="e.g. PO26TEST02" style="text-transform: uppercase;" required maxlength="10" />
+                    <span asp-validation-for="PoNumber" style="color: #ef4444; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="VendorCode" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="VendorCode" class="form-control" placeholder="e.g. V1002" style="text-transform: uppercase;" required maxlength="10" />
+                    <span asp-validation-for="VendorCode" style="color: #ef4444; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PoDate" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="PoDate" type="date" class="form-control" required />
+                    <span asp-validation-for="PoDate" style="color: #ef4444; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PoValue" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="PoValue" type="number" step="0.01" class="form-control" placeholder="e.g. 500000.00" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PlantCode" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="PlantCode" class="form-control" placeholder="e.g. P101" maxlength="4" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ContactPerson" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="ContactPerson" class="form-control" placeholder="e.g. John Doe" maxlength="100" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="e.g. vendor@gail.co.in" maxlength="100" />
+                    <span asp-validation-for="Email" style="color: #ef4444; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MobileNo" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                    <input asp-for="MobileNo" class="form-control" placeholder="e.g. 9876543210" maxlength="15" />
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 18px;">
+                <label asp-for="PoDescription" class="label" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);"></label>
+                <textarea asp-for="PoDescription" class="form-control" rows="2" placeholder="Describe the Purchase Order scope..." style="resize: none;" maxlength="500"></textarea>
+            </div>
+        </div>
+
+        <!-- Section 2: Line Items -->
+        <div class="card" style="margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); background-color: var(--bg-card); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+                <div style="font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #3b82f6;">PO Line Items</div>
+                <button type="button" class="btn btn-secondary" id="addLineItemBtn" style="font-size: 12px; padding: 6px 12px; background-color: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa;">
+                    + Add Line Item
+                </button>
+            </div>
+
+            <div style="overflow-x: auto; width: 100%; margin-bottom: 12px;">
+                <table class="qap-table" id="lineItemsTable" style="width: 100%; border-collapse: collapse; min-width: 800px;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="width: 80px; text-align: center;">Item</th>
+                            <th style="width: 80px; text-align: center;">Line</th>
+                            <th style="min-width: 250px;">Description</th>
+                            <th style="width: 120px; text-align: center;">Qty Ordered</th>
+                            <th style="width: 100px; text-align: center;">UOM</th>
+                            <th style="width: 140px; text-align: center;">Unit Price</th>
+                            <th style="width: 50px; text-align: center;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Initial Line Item row -->
+                        <tr class="line-row" style="border-bottom: 1px solid rgba(226, 232, 240, 0.05);">
+                            <td>
+                                <input name="LineItems[0].Item" type="number" class="form-control" value="1" required style="text-align: center;" />
+                            </td>
+                            <td>
+                                <input name="LineItems[0].Line" type="number" class="form-control" value="10" required style="text-align: center;" />
+                            </td>
+                            <td>
+                                <input name="LineItems[0].LineDescription" type="text" class="form-control" placeholder="e.g. Centrifugal Pump 50HP" required />
+                            </td>
+                            <td>
+                                <input name="LineItems[0].QtyOrdered" type="number" step="0.01" class="form-control" value="1" required style="text-align: center;" />
+                            </td>
+                            <td>
+                                <input name="LineItems[0].Uom" type="text" class="form-control" value="NOS" required style="text-align: center;" />
+                            </td>
+                            <td>
+                                <input name="LineItems[0].UnitPrice" type="number" step="0.01" class="form-control" value="0.00" required style="text-align: right;" />
+                            </td>
+                            <td style="text-align: center;">
+                                <button type="button" class="delete-row-btn" onclick="removeLineRow(this)">
+                                    &times;
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 3: Submit Actions -->
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 12px;">
+            <a asp-action="Create" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);">
+                Save Purchase Order
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addBtn = document.getElementById('addLineItemBtn');
+        const tbody = document.querySelector('#lineItemsTable tbody');
+
+        addBtn.addEventListener('click', function () {
+            // Count existing rows to generate next item and line numbers
+            const rowCount = tbody.querySelectorAll('tr').length;
+            const nextItem = rowCount + 1;
+            const nextLine = (rowCount + 1) * 10;
+
+            const tr = document.createElement('tr');
+            tr.className = 'line-row';
+            tr.style.borderBottom = '1px solid rgba(226, 232, 240, 0.05)';
+            tr.innerHTML = `
+                <td>
+                    <input name="LineItems[${rowCount}].Item" type="number" class="form-control" value="${nextItem}" required style="text-align: center;" />
+                </td>
+                <td>
+                    <input name="LineItems[${rowCount}].Line" type="number" class="form-control" value="${nextLine}" required style="text-align: center;" />
+                </td>
+                <td>
+                    <input name="LineItems[${rowCount}].LineDescription" type="text" class="form-control" placeholder="e.g. Spare Parts" required />
+                </td>
+                <td>
+                    <input name="LineItems[${rowCount}].QtyOrdered" type="number" step="0.01" class="form-control" value="1" required style="text-align: center;" />
+                </td>
+                <td>
+                    <input name="LineItems[${rowCount}].Uom" type="text" class="form-control" value="NOS" required style="text-align: center;" />
+                </td>
+                <td>
+                    <input name="LineItems[${rowCount}].UnitPrice" type="number" step="0.01" class="form-control" value="0.00" required style="text-align: right;" />
+                </td>
+                <td style="text-align: center;">
+                    <button type="button" class="delete-row-btn" onclick="removeLineRow(this)">&times;</button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+            reindexRows();
+        });
+    });
+
+    function removeLineRow(button) {
+        const tbody = document.querySelector('#lineItemsTable tbody');
+        const rows = tbody.querySelectorAll('tr');
+        if (rows.length <= 1) {
+            alert('A Purchase Order must contain at least one line item.');
+            return;
+        }
+        button.closest('tr').remove();
+        reindexRows();
+    }
+
+    function reindexRows() {
+        const rows = document.querySelectorAll('#lineItemsTable tbody tr');
+        rows.forEach((row, index) => {
+            row.querySelectorAll('input').forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    const newName = name.replace(/\[\d+\]/, `[${index}]`);
+                    input.setAttribute('name', newName);
+                }
+            });
+        });
+    }
+</script>

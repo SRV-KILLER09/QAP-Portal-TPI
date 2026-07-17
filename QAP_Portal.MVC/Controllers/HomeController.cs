@@ -42,59 +42,56 @@ namespace QAP_Portal.MVC.Controllers
                     : "initiator@gail.in")
                 : email.Trim();
 
-            // Allow only valid registered database admin accounts to access Admin role
-            if (role == nameof(UserRole.Admin))
+            // 1. Try Admin database login first
+            var adminResult = !string.IsNullOrWhiteSpace(password) 
+                ? await _api.LoginAdminAsync(email, password) 
+                : null;
+
+            if (adminResult != null)
             {
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    TempData["Error"] = "Password is required for Admin login.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var adminResult = await _api.LoginAdminAsync(email, password);
-                if (adminResult == null)
-                {
-                    TempData["Error"] = "Invalid admin credentials or account inactive.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                HttpContext.Session.SetString("Role", role);
+                HttpContext.Session.SetString("Role", nameof(UserRole.Admin));
                 HttpContext.Session.SetString("Email", email);
                 HttpContext.Session.SetString("AdminName", adminResult.AdminName);
                 HttpContext.Session.SetString("AdminId", adminResult.AdminId);
                 HttpContext.Session.SetString("DisplayName", adminResult.AdminName);
                 TempData["Success"] = $"Welcome back, Admin {adminResult.AdminName}!";
+                return RedirectToAction(nameof(Dashboard));
             }
-            else
+
+            // 2. Try Initiator/User database login next
+            var userResult = !string.IsNullOrWhiteSpace(password) 
+                ? await _api.LoginQapUserAsync(email, password) 
+                : null;
+
+            if (userResult != null)
             {
-                if (!string.IsNullOrWhiteSpace(password))
-                {
-                    var userResult = await _api.LoginQapUserAsync(email, password);
-                    if (userResult == null)
-                    {
-                        TempData["Error"] = "Invalid initiator credentials or account inactive.";
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    HttpContext.Session.SetString("Role", userResult.Role);
-                    HttpContext.Session.SetString("Email", userResult.Email);
-                    HttpContext.Session.SetString("DisplayName", userResult.DisplayName);
-                    TempData["Success"] = $"Welcome back, {userResult.DisplayName}!";
-                }
-                else
-                {
-                    HttpContext.Session.SetString("Role", role);
-                    HttpContext.Session.SetString("Email", email);
-                    
-                    var parts = email.Split('@');
-                    var displayName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(parts[0].Replace(".", " "));
-                    HttpContext.Session.SetString("DisplayName", displayName);
-                    
-                    TempData["Success"] = $"Access Granted! Welcome to GAIL QAP System.";
-                }
+                HttpContext.Session.SetString("Role", userResult.Role); // Fetches correct role from database (Admin or Initiator)
+                HttpContext.Session.SetString("Email", userResult.Email);
+                HttpContext.Session.SetString("DisplayName", userResult.DisplayName);
+                TempData["Success"] = $"Welcome back, {userResult.DisplayName}!";
+                return RedirectToAction(nameof(Dashboard));
             }
 
-            return RedirectToAction(nameof(Dashboard));
+            // 3. Fallback for passwordless / dev bypass (only if password is empty)
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                var admins = await _api.GetAdminsAsync();
+                bool isDbAdmin = admins.Any(a => a.Email.ToLower() == email.ToLower());
+                string resolvedRole = isDbAdmin ? nameof(UserRole.Admin) : nameof(UserRole.Initiator);
+                
+                HttpContext.Session.SetString("Role", resolvedRole);
+                HttpContext.Session.SetString("Email", email);
+                
+                var parts = email.Split('@');
+                var displayName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(parts[0].Replace(".", " "));
+                HttpContext.Session.SetString("DisplayName", displayName);
+                
+                TempData["Success"] = $"Access Granted! Welcome to GAIL QAP System.";
+                return RedirectToAction(nameof(Dashboard));
+            }
+
+            TempData["Error"] = "Invalid credentials or account inactive.";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -144,6 +141,28 @@ namespace QAP_Portal.MVC.Controllers
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", title, message, timestamp);
 
             return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(string email, string displayName, string password, string role)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(password))
+            {
+                TempData["Error"] = "All fields are required for registration.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var success = await _api.CreateQapUserAsync(email, displayName, role ?? "Initiator", password);
+            if (success)
+            {
+                TempData["Success"] = "Account created successfully! You can now log in.";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to create account. User might already exist.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]

@@ -18,6 +18,7 @@ namespace QAP_Portal.MVC.Models
         public IFormFile? PurchaseOrderCopyFile { get; set; }
 
         public string? Remarks { get; set; } // UI-only, not persisted by the current API
+        public string? AssignedAdmin { get; set; }
     }
 
     public class LineItemGroupInput

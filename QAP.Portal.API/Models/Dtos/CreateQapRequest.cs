@@ -4,6 +4,7 @@ namespace QAP.Portal.API.Models.Dtos
     {
         public string Po { get; set; } = null!;
         public string? InitiatorEmail { get; set; }
+        public string? AssignedAdmin { get; set; }
         public List<QapGroupRequest> Groups { get; set; } = new();
     }
 

@@ -55,7 +55,8 @@ namespace QAP.Portal.API.Controllers
                 {
                     var group = new QapLineGroup
                     {
-                        Status = "D"
+                        Status = "D",
+                        AssignedAdmin = request.AssignedAdmin
                     };
                     _context.QapLineGroups.Add(group);
                     await _context.SaveChangesAsync(); // save now so group.GroupId is generated

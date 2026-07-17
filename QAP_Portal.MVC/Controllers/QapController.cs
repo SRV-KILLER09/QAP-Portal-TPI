@@ -27,7 +27,15 @@ namespace QAP_Portal.MVC.Controllers
         private string CurrentEmail => HttpContext.Session.GetString("Email") ?? "initiator@gail.in";
 
         [HttpGet]
-        public IActionResult Create() => View(new CreateQapViewModel());
+        public IActionResult Create(string? poNumber = null)
+        {
+            var model = new CreateQapViewModel();
+            if (!string.IsNullOrWhiteSpace(poNumber))
+            {
+                model.PoNumber = poNumber.Trim().ToUpper();
+            }
+            return View(model);
+        }
 
         // AJAX: GET api/PurchaseOrders/{po} via the service, feeds Step 1 result + Step 2 line item table
         [HttpGet]
@@ -41,6 +49,13 @@ namespace QAP_Portal.MVC.Controllers
                 return Json(new { success = false, message = $"No purchase order found for '{poNumber}'." });
 
             return Json(new { success = true, po });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAdmins()
+        {
+            var admins = await _api.GetAdminsAsync();
+            return Json(admins);
         }
 
         // Final submit: POST api/QapCreation, then per-group and PO-level document uploads.
@@ -149,6 +164,35 @@ namespace QAP_Portal.MVC.Controllers
             var bytes = await _api.GetPoCopyBytesAsync(po);
             if (bytes is null || bytes.Length == 0) return NotFound();
             return File(bytes, "application/octet-stream", $"po-copy-{po}");
+        }
+
+        [HttpGet]
+        public IActionResult CreatePo() => View(new CreatePoViewModel());
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePo(CreatePoViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Please fill in all required PO details.";
+                return View(model);
+            }
+
+            if (model.LineItems == null || model.LineItems.Count == 0)
+            {
+                TempData["Error"] = "Please add at least one line item to the Purchase Order.";
+                return View(model);
+            }
+
+            var result = await _api.CreatePurchaseOrderAsync(model);
+            if (!result.Success)
+            {
+                TempData["Error"] = $"Failed to create Purchase Order: {result.ErrorMessage}";
+                return View(model);
+            }
+
+            TempData["Success"] = $"Purchase Order '{model.PoNumber}' created successfully.";
+            return RedirectToAction(nameof(Create), new { poNumber = model.PoNumber });
         }
     }
 }
