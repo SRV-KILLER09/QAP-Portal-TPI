@@ -180,6 +180,31 @@ namespace QAP_Portal.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword)
+        {
+            var email = HttpContext.Session.GetString("Email");
+            if (string.IsNullOrEmpty(email))
+            {
+                return Json(new { success = false, message = "Session expired. Please log in again." });
+            }
+
+            if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword))
+            {
+                return Json(new { success = false, message = "All password fields are required." });
+            }
+
+            var result = await _api.ChangePasswordAsync(email, currentPassword, newPassword);
+            if (result.Success)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, message = result.ErrorMessage });
+            }
+        }
+
         public IActionResult Error()
         {
             return View();

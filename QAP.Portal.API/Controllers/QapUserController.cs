@@ -145,6 +145,49 @@ namespace QAP.Portal.API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = $"User '{req.Email}' request rejected and removed." });
         }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.CurrentPassword) || string.IsNullOrWhiteSpace(req.NewPassword))
+                return BadRequest(new { error = "Email, current password, and new password are all required." });
+
+            var user = await _context.QapUsers
+                .FirstOrDefaultAsync(x => x.Email.ToLower() == req.Email.ToLower());
+
+            if (user == null)
+                return NotFound(new { error = "User not found." });
+
+            bool passwordOk = false;
+            try
+            {
+                passwordOk = BCrypt.Net.BCrypt.Verify(req.CurrentPassword, user.PasswordHash);
+            }
+            catch
+            {
+                passwordOk = (req.CurrentPassword == user.PasswordHash);
+            }
+
+            if (!passwordOk)
+            {
+                passwordOk = (req.CurrentPassword == user.PasswordHash);
+            }
+
+            if (!passwordOk)
+                return BadRequest(new { error = "The current password you entered is incorrect." });
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Password changed successfully." });
+        }
+    }
+
+    public class ChangePasswordRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string CurrentPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 
     public class UserApprovalRequest

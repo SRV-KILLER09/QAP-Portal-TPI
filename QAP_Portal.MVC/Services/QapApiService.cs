@@ -534,6 +534,28 @@ public async Task<byte[]?> GetPoCopyBytesAsync(string poNumber)
             }
         }
 
+        public async Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(string email, string currentPassword, string newPassword)
+        {
+            try
+            {
+                var body = new { Email = email, CurrentPassword = currentPassword, NewPassword = newPassword };
+                var response = await _http.PostAsJsonAsync("user/change-password", body, JsonOpts);
+                if (response.IsSuccessStatusCode)
+                {
+                    return (true, string.Empty);
+                }
+
+                var errorObj = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>(JsonOpts);
+                var errorMsg = errorObj != null && errorObj.TryGetValue("error", out var err) ? err : "Failed to change password.";
+                return (false, errorMsg);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password for user {Email}", email);
+                return (false, "An unexpected error occurred.");
+            }
+        }
+
 private async Task<List<T>> GetJsonListAsync<T>(string relativeUrl)
 {
     try

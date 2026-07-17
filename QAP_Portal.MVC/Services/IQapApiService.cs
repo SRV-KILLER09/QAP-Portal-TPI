@@ -86,5 +86,6 @@ namespace QAP_Portal.MVC.Services
         Task<List<QAP_Portal.MVC.Models.Api.QapUserViewModel>> GetPendingUsersAsync();
         Task<bool> ApproveUserAsync(string email);
         Task<bool> RejectUserAsync(string email);
+        Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(string email, string currentPassword, string newPassword);
     }
 }
