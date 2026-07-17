@@ -83,5 +83,8 @@ namespace QAP_Portal.MVC.Services
         Task<(bool Success, string ErrorMessage)> CreatePurchaseOrderAsync(CreatePoViewModel model);
         Task<List<AdminUserViewModel>> GetAdminsAsync();
         Task<bool> CreateQapUserAsync(string email, string displayName, string role, string password);
+        Task<List<QAP_Portal.MVC.Models.Api.QapUserViewModel>> GetPendingUsersAsync();
+        Task<bool> ApproveUserAsync(string email);
+        Task<bool> RejectUserAsync(string email);
     }
 }

@@ -65,6 +65,13 @@ namespace QAP_Portal.MVC.Controllers
 
             if (userResult != null)
             {
+                if (userResult.Error == "PENDING_APPROVAL")
+                {
+                    TempData["PendingApprovalEmail"] = email;
+                    TempData["PendingApproval"] = "true";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 HttpContext.Session.SetString("Role", userResult.Role); // Fetches correct role from database (Admin or Initiator)
                 HttpContext.Session.SetString("Email", userResult.Email);
                 HttpContext.Session.SetString("DisplayName", userResult.DisplayName);
@@ -155,7 +162,8 @@ namespace QAP_Portal.MVC.Controllers
             var success = await _api.CreateQapUserAsync(email, displayName, role ?? "Initiator", password);
             if (success)
             {
-                TempData["Success"] = "Account created successfully! You can now log in.";
+                TempData["PendingApprovalEmail"] = email;
+                TempData["PendingApproval"] = "true";
             }
             else
             {

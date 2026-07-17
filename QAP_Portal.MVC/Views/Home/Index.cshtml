@@ -42,6 +42,25 @@
             </div>
         }
 
+        @if (TempData["PendingApproval"] is string pending && pending == "true")
+        {
+            <div class="card animate-fade-in" style="background: rgba(245, 158, 11, 0.1); border: 1.5px solid rgba(245, 158, 11, 0.35); padding: 24px; border-radius: var(--radius-lg); margin-bottom: 24px; text-align: center;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 24px; font-weight: bold;">
+                    ⏳
+                </div>
+                <h3 style="color: var(--text-main); font-size: 16px; font-weight: 700; margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Registration Request Sent</h3>
+                <p style="color: var(--text-muted); font-size: 13.5px; line-height: 1.6; margin-bottom: 16px; font-family: 'Inter', sans-serif;">
+                    Your account registration request for <strong style="color: var(--primary);">@TempData["PendingApprovalEmail"]</strong> has been sent to the admin portal. Once an administrator approves your account, you will be able to log in.
+                </p>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 700; padding: 10px 18px; background-color: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius-md); display: inline-block; letter-spacing: 0.5px; text-transform: uppercase;">
+                    Status: <span style="color: #f59e0b;">Awaiting Admin Approval</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 14px; margin-bottom: 0; font-weight: 500;">
+                    Please contact system administrators at <a href="mailto:support@gail.co.in" style="color: var(--primary); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--primary);">support@gail.co.in</a> for quick activation.
+                </p>
+            </div>
+        }
+
         <!-- Unified Login Card -->
         <div class="login-card">
             <!-- Tabs -->
@@ -253,15 +272,21 @@
         // Toggle Active Tab class
         document.getElementById('tab-initiator').classList.toggle('active', role === 'initiator');
         document.getElementById('tab-admin').classList.toggle('active', role === 'admin');
+        document.getElementById('tab-register').classList.toggle('active', role === 'register');
         
         // Toggle Active Form class
         document.getElementById('form-initiator').classList.toggle('active', role === 'initiator');
         document.getElementById('form-admin').classList.toggle('active', role === 'admin');
+        document.getElementById('form-register').classList.toggle('active', role === 'register');
         
-        // Clear errors on tab switch
+        // Clear alerts on tab switch
         const errorAlert = document.querySelector('.alert-error');
         if (errorAlert) {
             errorAlert.style.display = 'none';
+        }
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            successAlert.style.display = 'none';
         }
     }
 

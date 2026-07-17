@@ -499,6 +499,41 @@ public async Task<byte[]?> GetPoCopyBytesAsync(string poNumber)
             }
         }
 
+        public async Task<List<QAP_Portal.MVC.Models.Api.QapUserViewModel>> GetPendingUsersAsync()
+        {
+            return await GetJsonListAsync<QAP_Portal.MVC.Models.Api.QapUserViewModel>("user/pending");
+        }
+
+        public async Task<bool> ApproveUserAsync(string email)
+        {
+            try
+            {
+                var body = new { Email = email };
+                var response = await _http.PostAsJsonAsync("user/approve", body, JsonOpts);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error approving user {Email}", email);
+                return false;
+            }
+        }
+
+        public async Task<bool> RejectUserAsync(string email)
+        {
+            try
+            {
+                var body = new { Email = email };
+                var response = await _http.PostAsJsonAsync("user/reject", body, JsonOpts);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error rejecting user {Email}", email);
+                return false;
+            }
+        }
+
 private async Task<List<T>> GetJsonListAsync<T>(string relativeUrl)
 {
     try

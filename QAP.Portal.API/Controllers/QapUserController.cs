@@ -42,6 +42,9 @@ namespace QAP.Portal.API.Controllers
             if (user == null)
                 return Unauthorized(new { error = "Invalid credentials." });
 
+            if (user.IsActive == 0)
+                return Unauthorized(new { error = "PENDING_APPROVAL" });
+
             if (user.IsActive != 1)
                 return Unauthorized(new { error = "This account is inactive." });
 
@@ -89,7 +92,7 @@ namespace QAP.Portal.API.Controllers
                 DisplayName = req.DisplayName.Trim(),
                 Role = string.IsNullOrWhiteSpace(req.Role) ? "Initiator" : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(req.Role.Trim().ToLower()),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.Password),
-                IsActive = 1,
+                IsActive = 0, // 0 = Pending Admin Approval
                 CreatedOn = DateTime.Now
             };
 
@@ -98,5 +101,54 @@ namespace QAP.Portal.API.Controllers
 
             return Ok(new { message = $"User '{req.Email}' created successfully." });
         }
+
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPendingUsers()
+        {
+            var pending = await _context.QapUsers
+                .Where(x => x.IsActive == 0)
+                .OrderByDescending(x => x.CreatedOn)
+                .ToListAsync();
+            return Ok(pending);
+        }
+
+        [HttpPost("approve")]
+        public async Task<IActionResult> ApproveUser([FromBody] UserApprovalRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Email))
+                return BadRequest(new { error = "Email is required." });
+
+            var user = await _context.QapUsers
+                .FirstOrDefaultAsync(x => x.Email.ToLower() == req.Email.ToLower());
+
+            if (user == null)
+                return NotFound(new { error = "User not found." });
+
+            user.IsActive = 1;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"User '{req.Email}' approved successfully." });
+        }
+
+        [HttpPost("reject")]
+        public async Task<IActionResult> RejectUser([FromBody] UserApprovalRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Email))
+                return BadRequest(new { error = "Email is required." });
+
+            var user = await _context.QapUsers
+                .FirstOrDefaultAsync(x => x.Email.ToLower() == req.Email.ToLower());
+
+            if (user == null)
+                return NotFound(new { error = "User not found." });
+
+            _context.QapUsers.Remove(user);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"User '{req.Email}' request rejected and removed." });
+        }
+    }
+
+    public class UserApprovalRequest
+    {
+        public string Email { get; set; } = string.Empty;
     }
 }

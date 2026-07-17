@@ -1,0 +1,64 @@
+@model List<QAP_Portal.MVC.Models.Api.QapUserViewModel>
+@{
+    ViewData["Title"] = "User Registration Requests";
+}
+
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;font-weight: 700;letter-spacing: 0.5px;">
+    ADMINISTRATION
+</div>
+<h1 class="page-title" style="margin-bottom: 20px;">User Registration Requests</h1>
+
+<div class="card animate-fade-in" style="padding: 0; overflow-x: auto; border-radius: var(--radius-lg);">
+    <table class="qap-table">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Corporate Email</th>
+                <th>Requested Role</th>
+                <th>Registration Date</th>
+                <th>Status</th>
+                <th style="text-align: right; padding-right: 24px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" style="text-align:center;color:var(--text-muted);padding: 32px 18px;">
+                    No pending registration requests found. All requests are processed!
+                </td>
+            </tr>
+        }
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td style="font-weight: 700; color: var(--text-main);">@user.DisplayName</td>
+                <td style="font-weight: 700; color: var(--primary);">@user.Email</td>
+                <td><span class="pill pill-draft" style="text-transform: uppercase;">@user.Role</span></td>
+                <td>@user.CreatedOn.ToString("MMMM dd, yyyy hh:mm tt")</td>
+                <td>
+                    <span class="pill pill-submitted" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        PENDING APPROVAL
+                    </span>
+                </td>
+                <td style="text-align: right; padding-right: 24px; vertical-align: middle;">
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+                        <form asp-action="Approve" method="post" style="display:inline; margin: 0;">
+                            <input type="hidden" name="email" value="@user.Email" />
+                            <button type="submit" class="btn btn-primary" style="padding: 5px 12px; font-size: 12.5px; box-shadow: none; background-color: #10b981; border-color: #10b981;">
+                                Approve
+                            </button>
+                        </form>
+                        <form asp-action="Reject" method="post" style="display:inline; margin: 0;" onsubmit="return confirm('Are you sure you want to reject and delete this registration request?');">
+                            <input type="hidden" name="email" value="@user.Email" />
+                            <button type="submit" class="btn btn-secondary" style="padding: 5px 12px; font-size: 12.5px; box-shadow: none; border-color: rgba(239, 68, 68, 0.4); color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                                Reject
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

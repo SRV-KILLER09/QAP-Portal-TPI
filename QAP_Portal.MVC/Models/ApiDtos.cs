@@ -136,5 +136,15 @@ namespace QAP_Portal.MVC.Models.Api
         public string Email { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public string? Error { get; set; }
+    }
+
+    public class QapUserViewModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public int IsActive { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }
