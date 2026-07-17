@@ -1,0 +1,88 @@
+## .NET / Visual Studio / Rider
+
+# Build results
+bin/
+obj/
+out/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio / VS Code / Rider files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish / deployment
+*.pubxml
+*.pubxml.user
+*.publishproj
+PublishScripts/
+publish/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# ASP.NET Core
+wwwroot/lib/
+*.log
+
+## App secrets / connection strings — never commit real credentials
+appsettings.json
+appsettings.*.json
+!appsettings.Example.json
+!appsettings.example.json
+secrets.json
+*.pfx
+*.key
+
+## OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Oracle client artifacts (if using instant client locally)
+oracle_wallet/
+tnsnames.ora
+sqlnet.ora
