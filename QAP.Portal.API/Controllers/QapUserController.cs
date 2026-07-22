@@ -102,6 +102,13 @@ namespace QAP.Portal.API.Controllers
             return Ok(new { message = $"User '{req.Email}' created successfully." });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _context.QapUsers.ToListAsync();
+            return Ok(users);
+        }
+
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingUsers()
         {

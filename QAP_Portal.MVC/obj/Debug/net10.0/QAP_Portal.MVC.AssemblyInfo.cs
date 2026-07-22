@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QAP_Portal.MVC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4dc122d2ffe1f60e0cec0950504595c6bac59b62")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+090f43c4b6bf7af60b8d0071c8b567c07a95f9f8")]
 [assembly: System.Reflection.AssemblyProductAttribute("QAP_Portal.MVC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QAP_Portal.MVC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

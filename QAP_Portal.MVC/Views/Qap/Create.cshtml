@@ -54,14 +54,24 @@
 
         <table class="line-items-table" id="lineItemsTable">
             <thead>
-                <tr><th></th><th>Line #</th><th>Item #</th><th>Description</th><th>Qty Ordered</th><th>UOM</th></tr>
+                <tr>
+                    <th><input type="checkbox" id="selectAllLinesCb" style="width:16px; height:16px; cursor:pointer; accent-color:#3b82f6;" title="Select All Line Items" /></th>
+                    <th>Line #</th>
+                    <th>Item #</th>
+                    <th>Description</th>
+                    <th>Qty Ordered</th>
+                    <th>UOM</th>
+                </tr>
             </thead>
             <tbody id="lineItemsBody"></tbody>
         </table>
 
         <button type="button" id="addDocumentsBtn" class="btn btn-secondary" disabled>Add Documents</button>
 
-        <div id="groupsContainer" style="margin-top:16px;"></div>
+        <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 16px; margin-bottom: 4px; font-weight: 500;">
+            💡 <strong>Tip:</strong> If multiple groups require the same QAP Document or Drawing, check the box next to those Group titles, upload the file in one group, and click <strong>Apply to Checked</strong>. Other groups will not be affected.
+        </div>
+        <div id="groupsContainer" style="margin-top:12px;"></div>
 
         <div class="btn-row split">
             <button type="button" class="btn btn-secondary" data-back="1">&lt; Back</button>
@@ -74,20 +84,93 @@
         <h3>Step 3 &middot; Documents</h3>
         <p style="font-size:13px;color:#6b6b6f;">Upload PO level documents applicable to the complete PO.</p>
 
+        <div style="margin-bottom: 20px; background: rgba(59, 130, 246, 0.05); padding: 14px 18px; border-radius: var(--radius-md); border: 1.5px solid rgba(59, 130, 246, 0.15); display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="syncAllPoDocsCb" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;" />
+            <label for="syncAllPoDocsCb" style="margin: 0; font-weight: 700; color: var(--text-main); font-family: 'Outfit', sans-serif; cursor: pointer; font-size: 13.5px;">Make Technical Specification and Purchase Order Copy the same file</label>
+        </div>
+
         <div class="detail-grid">
             <div>
                 <label class="form-label">Technical Specification *</label>
-                <input type="file" asp-for="TechnicalSpecificationFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+                <input type="file" id="techSpecFile" asp-for="TechnicalSpecificationFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
                 <div style="font-size:11px;color:#8a8a8e;">PDF, DOCX, JPG up to 25MB</div>
+                <button type="button" class="doc-sync-pill" onclick="syncPoFile('tech')" title="Copy this file to Purchase Order Copy">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                    Apply to PO Copy
+                </button>
             </div>
             <div>
                 <label class="form-label">Purchase Order Copy *</label>
-                <input type="file" asp-for="PurchaseOrderCopyFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+                <input type="file" id="poCopyFile" asp-for="PurchaseOrderCopyFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
                 <div style="font-size:11px;color:#8a8a8e;">PDF, DOCX, JPG up to 25MB</div>
+                <button type="button" class="doc-sync-pill" onclick="syncPoFile('po')" title="Copy this file to Technical Specification">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                    Apply to Tech Spec
+                </button>
             </div>
         </div>
 
-        <label class="form-label">Remarks (optional)</label>
+        <script>
+            function syncPoFile(sourceType) {
+                const srcInput = document.getElementById(sourceType === 'tech' ? 'techSpecFile' : 'poCopyFile');
+                const destInput = document.getElementById(sourceType === 'tech' ? 'poCopyFile' : 'techSpecFile');
+                if (!srcInput || !destInput || srcInput.files.length === 0) {
+                    alert("Please select a file first before copying.");
+                    return;
+                }
+                const file = srcInput.files[0];
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                destInput.files = dt.files;
+                destInput.dispatchEvent(new Event('change'));
+                
+                if (typeof showActionToast === 'function') {
+                    showActionToast("Sync Successful", `File applied to ${sourceType === 'tech' ? 'PO Copy' : 'Technical Spec'}!`);
+                }
+            }
+
+            document.getElementById('syncAllPoDocsCb').addEventListener('change', function() {
+                if (this.checked) {
+                    const techSpec = document.getElementById('techSpecFile');
+                    const poCopy = document.getElementById('poCopyFile');
+                    if (techSpec.files.length > 0) {
+                        const dt = new DataTransfer();
+                        dt.items.add(techSpec.files[0]);
+                        poCopy.files = dt.files;
+                        poCopy.dispatchEvent(new Event('change'));
+                    } else if (poCopy.files.length > 0) {
+                        const dt = new DataTransfer();
+                        dt.items.add(poCopy.files[0]);
+                        techSpec.files = dt.files;
+                        techSpec.dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+
+            document.getElementById('techSpecFile').addEventListener('change', function() {
+                const syncCb = document.getElementById('syncAllPoDocsCb');
+                if (syncCb && syncCb.checked && this.files.length > 0) {
+                    const poCopy = document.getElementById('poCopyFile');
+                    const dt = new DataTransfer();
+                    dt.items.add(this.files[0]);
+                    poCopy.files = dt.files;
+                    poCopy.dispatchEvent(new Event('change'));
+                }
+            });
+
+            document.getElementById('poCopyFile').addEventListener('change', function() {
+                const syncCb = document.getElementById('syncAllPoDocsCb');
+                if (syncCb && syncCb.checked && this.files.length > 0) {
+                    const techSpec = document.getElementById('techSpecFile');
+                    const dt = new DataTransfer();
+                    dt.items.add(this.files[0]);
+                    techSpec.files = dt.files;
+                    techSpec.dispatchEvent(new Event('change'));
+                }
+            });
+        </script>
+
+        <label class="form-label" style="margin-top: 20px;">Remarks (optional)</label>
         <textarea asp-for="Remarks" placeholder="Any notes or context for the inspection department..."></textarea>
         <div style="font-size:11px;color:#8a8a8e;margin-top:4px;">Note: remarks are not stored by the API today - shown here for context only.</div>
 
@@ -99,33 +182,71 @@
 
     <!-- STEP 4: REVIEW & SUBMIT -->
     <div class="wizard-panel" data-panel="4">
-        <h3>Step 4 &middot; Review &amp; Submit</h3>
-        <p style="font-size:13px;color:#6b6b6f;">Review the complete QAP before submission. Submitting creates one QAP per group below and immediately sets it to Submitted.</p>
+        <h3 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Step 4 &middot; Review &amp; Submit QAP</h3>
+        <p style="font-size:13.5px;color:var(--text-muted); margin-bottom: 24px;">Please review the details below. Submitting will create one QAP for each line item group.</p>
 
-        <div class="card">
-            <div class="detail-grid">
-                <div><div class="label">PO Number</div><div class="value" id="reviewPoNumber"></div></div>
-                <div><div class="label">PO Date</div><div class="value" id="reviewPoDate"></div></div>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 24px;">
+            <!-- PO Information Card -->
+            <div class="card" style="padding: 24px; border: 1.5px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(255, 127, 39, 0.01) 100%);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                    <div style="background-color: rgba(59, 130, 246, 0.15); padding: 8px; border-radius: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" style="width: 20px; height: 20px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--text-main);">Purchase Order Details</h4>
+                        <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">SAP Reference</span>
+                    </div>
+                </div>
+                <div class="detail-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <div><div class="label" style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">PO Number</div><div class="value" id="reviewPoNumber" style="font-size: 14px; font-weight: 700; color: #3b82f6;"></div></div>
+                    <div><div class="label" style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">PO Date</div><div class="value" id="reviewPoDate" style="font-size: 14px; font-weight: 700; color: var(--text-main);"></div></div>
+                </div>
             </div>
-            <div class="label" style="margin-bottom:6px;">Groups (one QAP each)</div>
-            <ul id="reviewLineItems" style="font-size:13px;"></ul>
-            <div class="label" style="margin-bottom:6px;">Uploaded Files</div>
-            <ul id="reviewFiles" style="font-size:13px;"></ul>
-            <div class="label" style="margin-bottom:6px;">Remarks</div>
-            <div id="reviewRemarks" style="font-size:13px;color:#6b6b6f;margin-bottom:16px;">&mdash;</div>
-            
-            <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
-                <label asp-for="AssignedAdmin" class="label" style="font-size: 11.5px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Select Reviewing Admin (TPI / Inspection Department) *</label>
-                <select asp-for="AssignedAdmin" class="form-control" required id="assignedAdminDropdown" style="background-color: var(--bg-main); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 10px; color: var(--text-main); font-weight: 600; width: 100%; max-width: 450px;">
-                    <option value="">-- Load Reviewers --</option>
-                </select>
-                <span asp-validation-for="AssignedAdmin" style="color: #ef4444; font-size: 12px; font-weight: 600; margin-top: 4px; display: block;"></span>
+
+            <!-- Groups Summary -->
+            <div class="card" style="padding: 24px; border: 1.5px solid var(--border); border-radius: var(--radius-lg); background-color: var(--bg-card);">
+                <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <span style="background-color: rgba(255, 127, 39, 0.15); color: #ff7f27; padding: 6px; border-radius: 6px; display: inline-flex; align-items: center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg></span>
+                    Groups Configuration
+                </h4>
+                <div id="reviewLineItemsContainer" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                    <!-- Rendered dynamically as cards -->
+                </div>
+            </div>
+
+            <!-- Uploaded Files Grid -->
+            <div class="card" style="padding: 24px; border: 1.5px solid var(--border); border-radius: var(--radius-lg); background-color: var(--bg-card);">
+                <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <span style="background-color: rgba(16, 185, 129, 0.15); color: #10b981; padding: 6px; border-radius: 6px; display: inline-flex; align-items: center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg></span>
+                    Uploaded Documents
+                </h4>
+                <div id="reviewFilesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+                    <!-- Rendered dynamically as premium cards -->
+                </div>
+            </div>
+
+            <!-- Remarks & Reviewing Admin -->
+            <div class="card" style="padding: 24px; border: 1.5px solid var(--border); border-radius: var(--radius-lg); background-color: var(--bg-card);">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                    <div>
+                        <div class="label" style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 6px;">Initiator Remarks</div>
+                        <div id="reviewRemarks" style="font-size: 13px; color: var(--text-main); padding: 10px 14px; background-color: var(--bg-main); border-radius: var(--radius-sm); border: 1px solid var(--border); font-style: italic;">&mdash;</div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                        <label asp-for="AssignedAdmin" class="label" style="font-size: 11px; font-weight: 800; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block;">Select Reviewing Admin (TPI / Inspection Department) *</label>
+                        <select asp-for="AssignedAdmin" class="form-control" required id="assignedAdminDropdown" style="background-color: var(--bg-main); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 12px; color: var(--text-main); font-weight: 600; width: 100%; max-width: 500px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <option value="">-- Load Reviewers --</option>
+                        </select>
+                        <span asp-validation-for="AssignedAdmin" style="color: #ef4444; font-size: 12px; font-weight: 600; margin-top: 4px; display: block;"></span>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="btn-row split">
             <button type="button" class="btn btn-secondary" data-back="3">&lt; Back</button>
-            <button type="submit" class="btn btn-primary">Submit QAP</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #10b981; border-color: #10b981; font-weight: 700;">Submit QAP</button>
         </div>
     </div>
 </form>
@@ -195,20 +316,34 @@
     document.getElementById('toStep2Btn').addEventListener('click', () => goToStep(2));
 
     function renderLineItems(items) {
+        const selectAllCb = document.getElementById('selectAllLinesCb');
+        if (selectAllCb) selectAllCb.checked = false;
+
         const body = document.getElementById('lineItemsBody');
         body.innerHTML = '';
         items.forEach(li => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="checkbox" class="line-item-cb" data-line="${li.line}" data-item="${li.itemNo}"></td>
+                <td><input type="checkbox" class="line-item-cb" data-line="${li.line}" data-item="${li.itemNo}" style="width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;"></td>
                 <td>${li.line}</td>
                 <td>${li.itemNo}</td>
-                <td>${li.description ?? ''}</td>
+                <td style="font-weight: 600;">${li.description ?? ''}</td>
                 <td>${li.qtyOrdered ?? ''}</td>
-                <td>${li.uom ?? ''}</td>`;
+                <td><span class="badge" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold;">${li.uom ?? ''}</span></td>`;
             body.appendChild(tr);
         });
         body.querySelectorAll('.line-item-cb').forEach(cb => cb.addEventListener('change', updateAddDocumentsState));
+    }
+
+    const selectAllCb = document.getElementById('selectAllLinesCb');
+    if (selectAllCb) {
+        selectAllCb.addEventListener('change', function() {
+            const checked = this.checked;
+            document.querySelectorAll('.line-item-cb:not(:disabled)').forEach(cb => {
+                cb.checked = checked;
+            });
+            updateAddDocumentsState();
+        });
     }
 
     function updateAddDocumentsState() {
@@ -234,20 +369,46 @@
         groups.forEach((g, idx) => {
             const div = document.createElement('div');
             div.className = 'group-block';
+            div.style.padding = '0';
+            div.style.overflow = 'hidden';
+            div.style.transition = 'all 0.25s ease';
             const summary = g.lineItems.map(li => `L${li.line}/I${li.itemNo}`).join(', ');
             div.innerHTML = `
-                <div class="group-header">
-                    <strong>Group ${idx + 1}</strong> — ${summary}
-                    <button type="button" class="btn btn-danger" data-remove-group="${idx}">Delete</button>
+                <div class="group-header" style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.05); padding: 12px 20px; border-bottom: 1.5px solid var(--border); margin-bottom: 0;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" class="group-select-cb" data-group-index="${idx}" id="cb_group_${idx}" style="width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6;" />
+                        <label for="cb_group_${idx}" style="margin: 0; font-weight: 700; color: var(--text-main); font-family: 'Outfit', sans-serif; cursor: pointer; font-size: 14px;">Group ${idx + 1} <span style="font-weight: 500; color: var(--text-muted); font-size: 12px; margin-left: 6px;">— ${summary}</span></label>
+                    </div>
+                    <button type="button" class="btn btn-danger" data-remove-group="${idx}" style="padding: 4px 10px; font-size: 11px;">Delete</button>
                 </div>
-                <div class="detail-grid">
+                <div class="detail-grid" style="padding: 20px;">
                     <div>
-                        <label class="form-label">QAP Document</label>
-                        <input type="file" name="Groups[${idx}].QapDocumentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg" />
+                        <label class="form-label" style="font-weight: 700; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">QAP Document</label>
+                        <input type="file" id="qapFile_${idx}" name="Groups[${idx}].QapDocumentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg" style="font-size: 12px;" />
+                        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                            <button type="button" class="doc-sync-pill" onclick="syncGroupFileToChecked(${idx}, 'qap')" title="Copy this file to all checked groups" style="background-color: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                Apply to Checked
+                            </button>
+                            <button type="button" class="doc-sync-pill" onclick="syncGroupFile(${idx}, 'qap')" title="Copy this file to all other groups" style="background-color: transparent; border: 1.5px solid var(--border); color: var(--text-muted); font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                Apply to All
+                            </button>
+                        </div>
                     </div>
                     <div>
-                        <label class="form-label">Drawing</label>
-                        <input type="file" name="Groups[${idx}].DrawingFile" accept=".pdf,.doc,.docx,.jpg,.jpeg" />
+                        <label class="form-label" style="font-weight: 700; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Drawing</label>
+                        <input type="file" id="drawingFile_${idx}" name="Groups[${idx}].DrawingFile" accept=".pdf,.doc,.docx,.jpg,.jpeg" style="font-size: 12px;" />
+                        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                            <button type="button" class="doc-sync-pill" onclick="syncGroupFileToChecked(${idx}, 'drawing')" title="Copy this file to all checked groups" style="background-color: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                Apply to Checked
+                            </button>
+                            <button type="button" class="doc-sync-pill" onclick="syncGroupFile(${idx}, 'drawing')" title="Copy this file to all other groups" style="background-color: transparent; border: 1.5px solid var(--border); color: var(--text-muted); font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                Apply to All
+                            </button>
+                        </div>
                     </div>
                 </div>
                 ${g.lineItems.map((li, liIdx) => `
@@ -256,6 +417,22 @@
                 `).join('')}
             `;
             container.appendChild(div);
+        });
+
+        // Add interactive border/background coloring when checked
+        container.querySelectorAll('.group-select-cb').forEach(cb => {
+            cb.addEventListener('change', () => {
+                const block = cb.closest('.group-block');
+                if (block) {
+                    if (cb.checked) {
+                        block.style.borderColor = '#3b82f6';
+                        block.style.boxShadow = '0 0 10px rgba(59, 130, 246, 0.15)';
+                    } else {
+                        block.style.borderColor = '';
+                        block.style.boxShadow = '';
+                    }
+                }
+            });
         });
 
         container.querySelectorAll('[data-remove-group]').forEach(btn => {
@@ -270,36 +447,164 @@
         document.getElementById('toStep3Btn').disabled = groups.length === 0;
     }
 
+    function syncGroupFile(sourceIdx, fileType) {
+        const sourceInput = document.getElementById(fileType === 'qap' ? `qapFile_${sourceIdx}` : `drawingFile_${sourceIdx}`);
+        if (!sourceInput || sourceInput.files.length === 0) {
+            alert("Please select a file first before applying to other groups.");
+            return;
+        }
+
+        const file = sourceInput.files[0];
+        const numGroups = groups.length;
+        
+        for (let i = 0; i < numGroups; i++) {
+            if (i === sourceIdx) continue;
+            const targetInput = document.getElementById(fileType === 'qap' ? `qapFile_${i}` : `drawingFile_${i}`);
+            if (targetInput) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                targetInput.files = dt.files;
+                targetInput.dispatchEvent(new Event('change'));
+            }
+        }
+
+        if (typeof showActionToast === 'function') {
+            showActionToast("Sync Successful", `${fileType === 'qap' ? 'QAP Document' : 'Drawing'} applied to all groups!`);
+        }
+    }
+
+    function syncGroupFileToChecked(sourceIdx, fileType) {
+        const sourceInput = document.getElementById(fileType === 'qap' ? `qapFile_${sourceIdx}` : `drawingFile_${sourceIdx}`);
+        if (!sourceInput || sourceInput.files.length === 0) {
+            alert("Please select a file first before applying.");
+            return;
+        }
+
+        const file = sourceInput.files[0];
+        
+        const checkedCbs = Array.from(document.querySelectorAll('.group-select-cb:checked'));
+        if (checkedCbs.length === 0) {
+            alert("Please check one or more destination groups first using the checkbox next to the Group titles.");
+            return;
+        }
+
+        let copiedCount = 0;
+        checkedCbs.forEach(cb => {
+            const destIdx = Number(cb.dataset.groupIndex);
+            if (destIdx === sourceIdx) return;
+            
+            const targetInput = document.getElementById(fileType === 'qap' ? `qapFile_${destIdx}` : `drawingFile_${destIdx}`);
+            if (targetInput) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                targetInput.files = dt.files;
+                targetInput.dispatchEvent(new Event('change'));
+                copiedCount++;
+            }
+        });
+
+        // Uncheck all after copying to keep the UI clean
+        document.querySelectorAll('.group-select-cb').forEach(cb => {
+            cb.checked = false;
+            cb.dispatchEvent(new Event('change'));
+        });
+
+        if (typeof showActionToast === 'function') {
+            showActionToast("Sync Successful", `${fileType === 'qap' ? 'QAP Document' : 'Drawing'} applied to ${copiedCount} selected group(s)!`);
+        }
+    }
+
     function buildReview() {
         document.getElementById('reviewPoNumber').textContent = currentPo ? currentPo.poNumber : '';
         document.getElementById('reviewPoDate').textContent = currentPo && currentPo.poDate ? new Date(currentPo.poDate).toLocaleDateString() : '';
 
-        const liList = document.getElementById('reviewLineItems');
-        liList.innerHTML = '';
+        const groupsContainer = document.getElementById('reviewLineItemsContainer');
+        groupsContainer.innerHTML = '';
         groups.forEach((g, idx) => {
-            const li = document.createElement('li');
-            li.textContent = `Group ${idx + 1}: ${g.lineItems.map(x => `Line ${x.line} / Item ${x.itemNo}`).join(', ')}`;
-            liList.appendChild(li);
+            const block = document.createElement('div');
+            block.style.padding = '12px 16px';
+            block.style.background = 'var(--bg-main)';
+            block.style.border = '1px solid var(--border)';
+            block.style.borderRadius = 'var(--radius-sm)';
+            block.style.display = 'flex';
+            block.style.justifyContent = 'space-between';
+            block.style.alignItems = 'center';
+            
+            const lineSummary = g.lineItems.map(x => `Line ${x.line} / Item ${x.itemNo}`).join(', ');
+            block.innerHTML = `
+                <span style="font-weight: 700; font-size: 13.5px; color: var(--text-main);">Group ${idx + 1}</span>
+                <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">${lineSummary}</span>
+            `;
+            groupsContainer.appendChild(block);
         });
 
-        const filesList = document.getElementById('reviewFiles');
-        filesList.innerHTML = '';
-        const techFile = document.querySelector('input[name="TechnicalSpecificationFile"]').files[0];
-        const poFile = document.querySelector('input[name="PurchaseOrderCopyFile"]').files[0];
-        if (techFile) addFileLi(filesList, `Technical Specification: ${techFile.name}`);
-        if (poFile) addFileLi(filesList, `Purchase Order Copy: ${poFile.name}`);
-        document.querySelectorAll('#groupsContainer input[type=file]').forEach(inp => {
-            if (inp.files[0]) addFileLi(filesList, `${inp.name}: ${inp.files[0].name}`);
+        const filesGrid = document.getElementById('reviewFilesGrid');
+        filesGrid.innerHTML = '';
+        
+        const techFile = document.getElementById('techSpecFile').files[0];
+        const poFile = document.getElementById('poCopyFile').files[0];
+        
+        if (techFile) addFileCard(filesGrid, techFile, `Technical Specification`, `PO Level`);
+        if (poFile) addFileCard(filesGrid, poFile, `Purchase Order Copy`, `PO Level`);
+        
+        groups.forEach((g, idx) => {
+            const qapInput = document.getElementById(`qapFile_${idx}`);
+            const drawingInput = document.getElementById(`drawingFile_${idx}`);
+            if (qapInput && qapInput.files[0]) {
+                addFileCard(filesGrid, qapInput.files[0], `QAP Document`, `Group ${idx + 1}`);
+            }
+            if (drawingInput && drawingInput.files[0]) {
+                addFileCard(filesGrid, drawingInput.files[0], `Drawing`, `Group ${idx + 1}`);
+            }
         });
 
         const remarks = document.querySelector('textarea[name="Remarks"]').value;
-        document.getElementById('reviewRemarks').textContent = remarks && remarks.trim() ? remarks : '—';
+        document.getElementById('reviewRemarks').textContent = remarks && remarks.trim() ? remarks : 'No remarks provided.';
     }
 
-    function addFileLi(list, text) {
-        const li = document.createElement('li');
-        li.textContent = text;
-        list.appendChild(li);
+    function addFileCard(grid, file, label, sub) {
+        const card = document.createElement('div');
+        card.style.padding = '14px';
+        card.style.background = 'var(--bg-main)';
+        card.style.border = '1.5px solid var(--border)';
+        card.style.borderRadius = 'var(--radius-md)';
+        card.style.display = 'flex';
+        card.style.alignItems = 'center';
+        card.style.justifyContent = 'space-between';
+        card.style.gap = '12px';
+        
+        const nameTruncated = file.name.length > 22 ? file.name.substring(0, 20) + '...' : file.name;
+        const sizeKb = (file.size / 1024).toFixed(1) + ' KB';
+        
+        card.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden; flex: 1;">
+                <div style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px; border-radius: 6px; font-size: 16px; flex-shrink: 0;">📄</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <div style="font-size: 11.5px; font-weight: 700; color: var(--text-main);">${label} <span style="font-weight: 500; color: var(--text-muted); font-size: 10px;">(${sub})</span></div>
+                    <span style="font-size: 10.5px; color: var(--text-muted); font-weight: 500;" title="${file.name}">${nameTruncated} &middot; ${sizeKb}</span>
+                </div>
+            </div>
+        `;
+        
+        const previewBtn = document.createElement('button');
+        previewBtn.type = 'button';
+        previewBtn.style.padding = '6px 12px';
+        previewBtn.style.fontSize = '11px';
+        previewBtn.style.fontWeight = '700';
+        previewBtn.style.borderRadius = '4px';
+        previewBtn.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+        previewBtn.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+        previewBtn.style.color = '#3b82f6';
+        previewBtn.style.cursor = 'pointer';
+        previewBtn.textContent = 'Preview';
+        previewBtn.addEventListener('click', () => {
+            if (typeof openDocumentPreview === 'function') {
+                openDocumentPreview(file, label, file.name);
+            }
+        });
+        
+        card.appendChild(previewBtn);
+        grid.appendChild(card);
     }
 
     async function loadAdmins() {

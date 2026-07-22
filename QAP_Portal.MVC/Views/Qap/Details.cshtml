@@ -101,23 +101,23 @@
         <div class="doc-grid">
             @if (Model.HasTechSpec)
             {
-                <a class="doc-card" asp-action="DownloadTechSpec" asp-route-po="@Model.PoNumber">
+                <div class="doc-card" onclick="openDocumentPreview('/Qap/DownloadTechSpec?po=@Model.PoNumber', 'Technical Specification', '@Model.PoNumber')" style="cursor: pointer; flex: 1; min-width: 240px;">
                     <div class="doc-card-icon">📄</div>
                     <div class="doc-card-info">
                         <div class="doc-card-title">Technical Specification</div>
-                        <div class="doc-card-subtitle">PO level document</div>
+                        <div class="doc-card-subtitle">PO level document &middot; Click to Preview</div>
                     </div>
-                </a>
+                </div>
             }
             @if (Model.HasPoCopy)
             {
-                <a class="doc-card" asp-action="DownloadPoCopy" asp-route-po="@Model.PoNumber">
+                <div class="doc-card" onclick="openDocumentPreview('/Qap/DownloadPoCopy?po=@Model.PoNumber', 'Purchase Order Copy', '@Model.PoNumber')" style="cursor: pointer; flex: 1; min-width: 240px;">
                     <div class="doc-card-icon">📄</div>
                     <div class="doc-card-info">
                         <div class="doc-card-title">Purchase Order Copy</div>
-                        <div class="doc-card-subtitle">PO level document</div>
+                        <div class="doc-card-subtitle">PO level document &middot; Click to Preview</div>
                     </div>
-                </a>
+                </div>
             }
             @if (!Model.HasTechSpec && !Model.HasPoCopy)
             {
@@ -133,23 +133,23 @@
         <div class="doc-grid">
             @if (Model.HasQapDocument)
             {
-                <a class="doc-card" asp-action="DownloadQapDocument" asp-route-id="@Model.GroupId">
+                <div class="doc-card" onclick="openDocumentPreview('/Qap/DownloadQapDocument?id=@Model.GroupId', 'QAP Document', 'Group @Model.GroupId')" style="cursor: pointer; flex: 1; min-width: 240px;">
                     <div class="doc-card-icon" style="background-color: var(--secondary-light); color: var(--secondary);">📁</div>
                     <div class="doc-card-info">
                         <div class="doc-card-title">QAP Document</div>
-                        <div class="doc-card-subtitle">Group sheet upload</div>
+                        <div class="doc-card-subtitle">Group sheet upload &middot; Click to Preview</div>
                     </div>
-                </a>
+                </div>
             }
             @if (Model.HasDrawing)
             {
-                <a class="doc-card" asp-action="DownloadDrawing" asp-route-id="@Model.GroupId">
+                <div class="doc-card" onclick="openDocumentPreview('/Qap/DownloadDrawing?id=@Model.GroupId', 'Drawing', 'Group @Model.GroupId')" style="cursor: pointer; flex: 1; min-width: 240px;">
                     <div class="doc-card-icon" style="background-color: var(--secondary-light); color: var(--secondary);">📐</div>
                     <div class="doc-card-info">
                         <div class="doc-card-title">Drawing</div>
-                        <div class="doc-card-subtitle">Technical blueprint</div>
+                        <div class="doc-card-subtitle">Technical blueprint &middot; Click to Preview</div>
                     </div>
-                </a>
+                </div>
             }
             @if (!Model.HasQapDocument && !Model.HasDrawing)
             {

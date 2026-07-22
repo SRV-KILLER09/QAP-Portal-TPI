@@ -88,6 +88,24 @@ namespace QAP.Portal.API.Data
                 entity.Property(x => x.CreatedOn).HasColumnName("CREATED_ON");
             });
 
+            // Configure QapLineGroup document BLOBs
+            modelBuilder.Entity<QapLineGroup>(entity =>
+            {
+                entity.Property(e => e.QapDocument)
+                    .HasColumnType("BLOB");
+                entity.Property(e => e.DrawingDocument)
+                    .HasColumnType("BLOB");
+            });
+
+            // Configure PoDocument BLOBs
+            modelBuilder.Entity<PoDocument>(entity =>
+            {
+                entity.Property(e => e.TechSpec)
+                    .HasColumnType("BLOB");
+                entity.Property(e => e.PoCopy)
+                    .HasColumnType("BLOB");
+            });
+
             base.OnModelCreating(modelBuilder);
         }
     }

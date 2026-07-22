@@ -23,7 +23,14 @@
                 <th>QAP Number</th>
                 <th>PO Number</th>
                 <th style="text-align: center;">Line Items</th>
-                <th>Submitted By</th>
+                @if (active == QapStatus.Approved)
+                {
+                    <th>Approved By</th>
+                }
+                else if (active == QapStatus.Rejected)
+                {
+                    <th>Rejected By</th>
+                }
                 <th>Date</th>
                 <th>Status</th>
                 <th></th>
@@ -33,7 +40,7 @@
         @if (!Model.Any())
         {
             <tr>
-                <td colspan="7" style="text-align:center;color:var(--text-muted);padding: 32px 18px;">
+                <td colspan="@(active == QapStatus.Approved || active == QapStatus.Rejected ? "7" : "6")" style="text-align:center;color:var(--text-muted);padding: 32px 18px;">
                     No QAPs found matching this status.
                 </td>
             </tr>
@@ -44,7 +51,14 @@
                 <td style="font-weight: 700; color: var(--text-main);">@qap.QapNumber</td>
                 <td style="font-weight: 700; color: var(--primary);">@qap.PoNumber</td>
                 <td style="text-align: center;"><span style="background-color: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">@qap.LineItems.Count</span></td>
-                <td>@qap.InitiatedBy</td>
+                @if (active == QapStatus.Approved)
+                {
+                    <td style="font-weight: 600; color: var(--text-main);">@(qap.LastActionBy ?? "-")</td>
+                }
+                else if (active == QapStatus.Rejected)
+                {
+                    <td style="font-weight: 600; color: var(--text-main);">@(qap.LastActionBy ?? "-")</td>
+                }
                 <td>@(qap.InitiatedOn?.ToString("M/d/yyyy") ?? "-")</td>
                 <td><span class="pill pill-@qap.Status.ToString().ToLower()">@qap.Status</span></td>
                 <td style="text-align: right; padding-right: 24px;">

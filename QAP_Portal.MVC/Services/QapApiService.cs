@@ -140,7 +140,7 @@ namespace QAP_Portal.MVC.Services
         {
             var summaries = await BuildSummariesAsync();
             var mine = summaries.Where(s =>
-                string.Equals(s.InitiatedBy, initiatorEmail, StringComparison.OrdinalIgnoreCase)).ToList();
+                string.Equals(s.InitiatedByEmail, initiatorEmail, StringComparison.OrdinalIgnoreCase)).ToList();
             return status.HasValue ? mine.Where(s => s.Status == status.Value).ToList() : mine;
         }
 
@@ -151,6 +151,11 @@ namespace QAP_Portal.MVC.Services
             var groups = await GetJsonListAsync<QapLineGroupDto>("QapLineGroups");
             var items = await GetJsonListAsync<QapGroupItemDto>("QapGroupItems");
             var logs = await GetJsonListAsync<GroupActionLogDto>("GroupActionLog");
+            var users = await GetJsonListAsync<QAP_Portal.MVC.Models.Api.QapUserViewModel>("user");
+            var admins = await GetJsonListAsync<AdminUserViewModel>("admin");
+
+            var userNames = users.ToDictionary(u => u.Email.ToLower(), u => u.DisplayName);
+            var adminNames = admins.ToDictionary(a => a.Email.ToLower(), a => a.AdminName);
 
             var result = new List<QapGroupSummary>();
             foreach (var g in groups)
@@ -160,6 +165,22 @@ namespace QAP_Portal.MVC.Services
                 var initiatedLog = groupLogs.FirstOrDefault(l => l.Stage == "I");
                 var lastLog = groupLogs.LastOrDefault();
 
+                string? resolvedLastActionBy = lastLog?.ActionBy;
+                if (!string.IsNullOrEmpty(resolvedLastActionBy))
+                {
+                    var clean = resolvedLastActionBy.Trim().ToLower();
+                    if (adminNames.TryGetValue(clean, out var adminName)) resolvedLastActionBy = adminName;
+                    else if (userNames.TryGetValue(clean, out var userName)) resolvedLastActionBy = userName;
+                }
+
+                string? resolvedInitiatedBy = initiatedLog?.ActionBy;
+                if (!string.IsNullOrEmpty(resolvedInitiatedBy))
+                {
+                    var clean = resolvedInitiatedBy.Trim().ToLower();
+                    if (userNames.TryGetValue(clean, out var userName)) resolvedInitiatedBy = userName;
+                    else if (adminNames.TryGetValue(clean, out var adminName)) resolvedInitiatedBy = adminName;
+                }
+
                 result.Add(new QapGroupSummary
                 {
                     GroupId = g.GroupId,
@@ -167,9 +188,10 @@ namespace QAP_Portal.MVC.Services
                     Status = QapStatusMapper.FromCode(g.Status),
                     PoNumber = groupItems.FirstOrDefault()?.Po,
                     LineItems = groupItems.Select(i => new LineItemRef { Line = i.Line, ItemNo = i.ItemNo }).ToList(),
-                    InitiatedBy = initiatedLog?.ActionBy,
+                    InitiatedBy = resolvedInitiatedBy,
+                    InitiatedByEmail = initiatedLog?.ActionBy,
                     InitiatedOn = initiatedLog?.ActionOn,
-                    LastActionBy = lastLog?.ActionBy,
+                    LastActionBy = resolvedLastActionBy,
                     LastActionOn = lastLog?.ActionOn,
                     LastRemarks = lastLog?.Remarks,
                     AssignedAdmin = g.AssignedAdmin
@@ -197,6 +219,37 @@ namespace QAP_Portal.MVC.Services
                 var initiatedLog = groupLogs.FirstOrDefault(l => l.Stage == "I");
                 var lastLog = groupLogs.LastOrDefault();
 
+                var users = await GetJsonListAsync<QAP_Portal.MVC.Models.Api.QapUserViewModel>("user");
+                var admins = await GetJsonListAsync<AdminUserViewModel>("admin");
+                var userNames = users.ToDictionary(u => u.Email.ToLower(), u => u.DisplayName);
+                var adminNames = admins.ToDictionary(a => a.Email.ToLower(), a => a.AdminName);
+
+                foreach (var log in groupLogs)
+                {
+                    if (!string.IsNullOrEmpty(log.ActionBy))
+                    {
+                        var clean = log.ActionBy.Trim().ToLower();
+                        if (adminNames.TryGetValue(clean, out var adminName)) log.ActionBy = adminName;
+                        else if (userNames.TryGetValue(clean, out var userName)) log.ActionBy = userName;
+                    }
+                }
+
+                string? resolvedLastActionBy = lastLog?.ActionBy;
+                if (!string.IsNullOrEmpty(resolvedLastActionBy))
+                {
+                    var clean = resolvedLastActionBy.Trim().ToLower();
+                    if (adminNames.TryGetValue(clean, out var adminName)) resolvedLastActionBy = adminName;
+                    else if (userNames.TryGetValue(clean, out var userName)) resolvedLastActionBy = userName;
+                }
+
+                string? resolvedInitiatedBy = initiatedLog?.ActionBy;
+                if (!string.IsNullOrEmpty(resolvedInitiatedBy))
+                {
+                    var clean = resolvedInitiatedBy.Trim().ToLower();
+                    if (userNames.TryGetValue(clean, out var userName)) resolvedInitiatedBy = userName;
+                    else if (adminNames.TryGetValue(clean, out var adminName)) resolvedInitiatedBy = adminName;
+                }
+
                 var detail = new QapGroupDetail
                 {
                     GroupId = group.GroupId,
@@ -204,9 +257,9 @@ namespace QAP_Portal.MVC.Services
                     Status = QapStatusMapper.FromCode(group.Status),
                     PoNumber = poNumber,
                     LineItems = groupItems.Select(i => new LineItemRef { Line = i.Line, ItemNo = i.ItemNo }).ToList(),
-                    InitiatedBy = initiatedLog?.ActionBy,
+                    InitiatedBy = resolvedInitiatedBy,
                     InitiatedOn = initiatedLog?.ActionOn,
-                    LastActionBy = lastLog?.ActionBy,
+                    LastActionBy = resolvedLastActionBy,
                     LastActionOn = lastLog?.ActionOn,
                     LastRemarks = lastLog?.Remarks,
                     HasQapDocument = group.QapDocument is { Length: > 0 },

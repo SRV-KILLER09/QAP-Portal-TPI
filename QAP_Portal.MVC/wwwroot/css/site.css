@@ -2662,6 +2662,98 @@ input[type=number] {
     transform: translateY(0);
 }
 
+/* Document Copy / Sync Buttons */
+.doc-sync-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    padding: 3px 8px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 6px;
+    user-select: none;
+}
+
+.doc-sync-pill:hover {
+    color: #ffffff;
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+.doc-sync-pill:active {
+    transform: translateY(0);
+}
+
+/* Document Preview Badges */
+.doc-preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #10b981;
+    background-color: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.18);
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 10px;
+    text-decoration: none !important;
+}
+
+.doc-preview-badge:hover {
+    color: #ffffff !important;
+    background-color: #10b981;
+    border-color: #10b981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* Document Details Card Container & Preview Button */
+.doc-card-container {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-doc-preview {
+    padding: 0 14px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border);
+    background-color: var(--bg-main);
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-doc-preview:hover {
+    border-color: #10b981;
+    background-color: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-doc-preview:active {
+    transform: translateY(0);
+}
+
+
+
 
 
 

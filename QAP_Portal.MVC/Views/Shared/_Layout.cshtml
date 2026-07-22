@@ -459,6 +459,34 @@ else
         </div>
     </div>
 
+    <!-- Document Live Preview Modal -->
+    <div id="docPreviewModal" class="cmd-palette-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(3, 5, 8, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100004; justify-content: center; align-items: center; padding: 24px;" onclick="closeDocumentPreview(event)">
+        <div class="preview-box" style="width: 100%; max-width: 950px; height: 85vh; background-color: var(--bg-card); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(59, 130, 246, 0.15); display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div style="padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(255, 127, 39, 0.03) 100%);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" style="width: 22px; height: 22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <div>
+                        <h3 id="previewTitle" style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0; font-family: 'Outfit', sans-serif;">Document Preview</h3>
+                        <span id="previewSub" style="font-size: 10px; color: var(--text-muted); font-weight: 600; font-family: 'Inter', sans-serif;">File Loader</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <a id="modalDownloadBtn" href="" download class="btn btn-primary" style="display: none; align-items: center; gap: 6px; font-size: 11px; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-weight: 700; color: #ffffff; background-color: #3b82f6;" title="Download Original Document">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 12px; height: 12px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download
+                    </a>
+                    <button type="button" class="modal-close-btn" onclick="closeDocumentPreview(null)" style="font-size: 24px; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0 4px; line-height: 1;">&times;</button>
+                </div>
+            </div>
+            <!-- Body / Content -->
+            <div id="previewContentContainer" style="flex: 1; background-color: #05080e; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                <!-- Renders iframe or img dynamically -->
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         function dismissToast() {
@@ -618,6 +646,19 @@ else
             <button onclick="closeLiveAlert()" style="background: none; border: none; color: #5f7596; font-size: 18px; cursor: pointer; line-height: 1; padding: 0; margin-left: 8px;">&times;</button>
         </div>
     </div>
+
+    <!-- General Purpose Toast Container -->
+    <div id="generalActionToast" class="live-alert-toast" style="display: none; position: fixed; bottom: 24px; right: 24px; width: 320px; background-color: #05080e; border: 1.5px solid #3b82f6; border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.2); z-index: 100005; padding: 14px 16px; overflow: hidden;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; flex-shrink: 0;">✓</div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span id="generalToastTitle" style="font-size: 12px; font-weight: 800; color: #3b82f6; letter-spacing: 0.5px; text-transform: uppercase;">Sync Successful</span>
+                <span id="generalToastMsg" style="font-size: 11px; color: #e2e8f0; line-height: 1.3;"></span>
+            </div>
+            <button onclick="document.getElementById('generalActionToast').style.display='none'" style="background: none; border: none; color: #5f7596; font-size: 18px; cursor: pointer; line-height: 1; padding: 0; margin-left: 8px;">&times;</button>
+        </div>
+    </div>
+
 
     <!-- SignalR Client Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
@@ -829,6 +870,135 @@ else
                 errorEl.textContent = "An error occurred while updating the password.";
                 errorEl.style.display = "block";
             });
+        }
+
+        // Document Live Preview Helpers
+        function openDocumentPreview(fileOrUrl, title, sub) {
+            const modal = document.getElementById('docPreviewModal');
+            const titleEl = document.getElementById('previewTitle');
+            const subEl = document.getElementById('previewSub');
+            const container = document.getElementById('previewContentContainer');
+            
+            if (!modal || !container) return;
+
+            titleEl.textContent = title || "Document Preview";
+            subEl.textContent = sub || "Inline Viewer";
+            container.innerHTML = '<div style="color: #5f7596; font-size: 13px; font-family: sans-serif; font-weight: 600; display: flex; align-items: center; gap: 8px; justify-content: center; height: 100%;"><div class="health-pulse-dot" style="background-color: #3b82f6;"></div>Loading document stream...</div>';
+
+            modal.style.display = 'flex';
+
+            let url = "";
+            let isDocxOrUnsupported = false;
+            let fileType = "";
+
+            if (typeof fileOrUrl === 'string') {
+                url = fileOrUrl;
+                const ext = url.split('?')[0].split('.').pop().toLowerCase();
+                if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(ext)) {
+                    fileType = "image";
+                } else if (ext === 'pdf') {
+                    fileType = "pdf";
+                } else if (['docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) {
+                    isDocxOrUnsupported = true;
+                    fileType = ext;
+                } else {
+                    fileType = "pdf"; // Default to iframe preview
+                }
+            } else if (fileOrUrl instanceof File) {
+                url = URL.createObjectURL(fileOrUrl);
+                const type = fileOrUrl.type.toLowerCase();
+                if (type.startsWith('image/')) {
+                    fileType = "image";
+                } else if (type === 'application/pdf') {
+                    fileType = "pdf";
+                } else {
+                    const ext = fileOrUrl.name.split('.').pop().toLowerCase();
+                    if (['docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) {
+                        isDocxOrUnsupported = true;
+                        fileType = ext;
+                    } else {
+                        fileType = "pdf";
+                    }
+                }
+            } else {
+                container.innerHTML = '<div style="color: #ef4444; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%;">No file uploaded or file reference is invalid.</div>';
+                return;
+            }
+
+            modal.dataset.tempUrl = (fileOrUrl instanceof File) ? url : "";
+
+            const downloadBtn = document.getElementById('modalDownloadBtn');
+            if (downloadBtn) {
+                downloadBtn.href = url;
+                downloadBtn.download = (fileOrUrl instanceof File) ? fileOrUrl.name : (title || 'document');
+                downloadBtn.style.display = 'inline-flex';
+            }
+
+            setTimeout(() => {
+                if (isDocxOrUnsupported) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.85;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            <h4 style="color: #ffffff; font-weight: 700; margin-bottom: 8px; font-size: 15px;">Preview Not Supported</h4>
+                            <p style="font-size: 12.5px; line-height: 1.4; max-width: 320px; margin: 0 auto 18px auto; text-align: center;">
+                                Microsoft Office files (.${fileType}) cannot be rendered directly in the browser preview.
+                            </p>
+                            <a href="${url}" download="${fileOrUrl instanceof File ? fileOrUrl.name : 'download'}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 8px 16px; text-decoration: none; border-radius: 6px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Download Document
+                            </a>
+                        </div>`;
+                } else if (fileType === 'image') {
+                    container.innerHTML = `<img src="${url}" style="max-width: 95%; max-height: 95%; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);" />`;
+                } else {
+                    container.innerHTML = `<iframe src="${url}" style="width: 100%; height: 100%; border: none;" />`;
+                }
+            }, 300);
+        }
+
+        function closeDocumentPreview(e) {
+            if (e && e.target !== document.getElementById('docPreviewModal') && e.target.className !== 'modal-close-btn') return;
+            const modal = document.getElementById('docPreviewModal');
+            const container = document.getElementById('previewContentContainer');
+            const downloadBtn = document.getElementById('modalDownloadBtn');
+            
+            if (downloadBtn) {
+                downloadBtn.href = "";
+                downloadBtn.style.display = 'none';
+            }
+            if (modal) {
+                modal.style.display = 'none';
+                if (modal.dataset.tempUrl) {
+                    URL.revokeObjectURL(modal.dataset.tempUrl);
+                    modal.dataset.tempUrl = "";
+                }
+                if (container) container.innerHTML = '';
+            }
+        }
+
+        function showActionToast(title, message) {
+            const toast = document.getElementById('generalActionToast');
+            const titleEl = document.getElementById('generalToastTitle');
+            const msgEl = document.getElementById('generalToastMsg');
+            if (toast && titleEl && msgEl) {
+                titleEl.textContent = title;
+                msgEl.textContent = message;
+                toast.style.display = 'block';
+                toast.style.animation = 'alertSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                
+                // Clear any existing timeout on the toast
+                if (toast.dataset.timeoutId) {
+                    clearTimeout(Number(toast.dataset.timeoutId));
+                }
+                
+                const tId = setTimeout(() => {
+                    if (toast.style.display !== 'none') {
+                        toast.style.animation = 'alertSlideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                        setTimeout(() => { toast.style.display = 'none'; }, 300);
+                    }
+                }, 4000);
+                toast.dataset.timeoutId = String(tId);
+            }
         }
 
         // Bind all support triggers dynamically

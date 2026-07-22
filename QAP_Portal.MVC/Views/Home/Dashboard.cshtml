@@ -56,40 +56,40 @@
 
 <div class="scada-stats-grid" style="margin-bottom: 28px;">
     <!-- Card 1: Total -->
-    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="@(isAdmin ? Url.Action("Index", "QapApproval") : Url.Action("MyQaps", "Qap"))" class="scada-stat-card" style="text-decoration: none; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
         <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
             @Model.Total
         </div>
         <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Total QAPs</div>
-    </div>
+    </a>
     <!-- Card 2: Draft -->
-    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="@(isAdmin ? Url.Action("Index", "QapApproval", new { status = "Draft" }) : Url.Action("MyQaps", "Qap"))" class="scada-stat-card" style="text-decoration: none; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
         <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
             @Model.DraftCount
         </div>
         <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Draft QAPs</div>
-    </div>
+    </a>
     <!-- Card 3: Submitted -->
-    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="@(isAdmin ? Url.Action("Index", "QapApproval", new { status = "Submitted" }) : Url.Action("MyQaps", "Qap", new { status = "Submitted" }))" class="scada-stat-card" style="text-decoration: none; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
         <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
             @Model.SubmittedCount
         </div>
         <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Submitted QAPs</div>
-    </div>
+    </a>
     <!-- Card 4: Approved -->
-    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="@(isAdmin ? Url.Action("Index", "QapApproval", new { status = "Approved" }) : Url.Action("MyQaps", "Qap", new { status = "Approved" }))" class="scada-stat-card" style="text-decoration: none; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
         <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
             @Model.ApprovedCount
         </div>
         <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Approved QAPs</div>
-    </div>
+    </a>
     <!-- Card 5: Rejected -->
-    <div class="scada-stat-card" style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="@(isAdmin ? Url.Action("Index", "QapApproval", new { status = "Rejected" }) : Url.Action("MyQaps", "Qap", new { status = "Rejected" }))" class="scada-stat-card" style="text-decoration: none; background-color: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
         <div class="stat-badge" style="width: 38px; height: 38px; border-radius: 10px; background-color: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800;">
             @Model.RejectedCount
         </div>
         <div style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);">Rejected QAPs</div>
-    </div>
+    </a>
 </div>
 
 <div class="card animate-fade-in" style="animation-delay: 0.1s;">

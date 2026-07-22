@@ -22,6 +22,7 @@ namespace QAP_Portal.MVC.Models
         public List<LineItemRef> LineItems { get; set; } = new();
 
         public string? InitiatedBy { get; set; }
+        public string? InitiatedByEmail { get; set; }
         public DateTime? InitiatedOn { get; set; }
 
         public string? LastActionBy { get; set; }
